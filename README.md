@@ -23,3 +23,10 @@ Download App Connect
 
 ### Step 5 - Pre-requisite steps in TAS
 
+Download the [OM Package](/docs/APIConnector_v0.4.zip) containing TRIRIGA OSLC Resources for below APIs.
+
+Business Object | Integration Type | Supported Integrations
+---|---|---
+People | Inbound & Outbound | Create and Retire
+Building Equipment | Inbound & Outbound | Create and Retire
+Space | Inbound & Outbound | Create and Retire
