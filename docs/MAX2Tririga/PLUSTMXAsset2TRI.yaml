@@ -1,0 +1,888 @@
+$integration: http://ibm.com/appconnect/integration/v2/integrationFile
+integration:
+  type: api
+  trigger-interfaces:
+    trigger-interface-1:
+      triggers:
+        syncassetTriAsset:
+          assembly:
+            $ref: '#/integration/assemblies/assembly-1'
+          input-context:
+            data: mxAsset
+          output-context:
+            data: triAsset
+      options:
+        resources:
+          - business-object: triAsset
+            model:
+              $ref: '#/models/triAsset'
+            triggers:
+              syncasset: syncassetTriAsset
+          - business-object: mxAsset
+            model:
+              $ref: '#/models/mxAsset'
+            triggers: {}
+      type: api-trigger
+  action-interfaces:
+    action-interface-1:
+      type: api-action
+      business-object: testclient_model
+      connector-type: UDA.default.openapi.testClient
+      account-name: Account 1
+      actions:
+        testclient: {}
+    action-interface-3:
+      type: api-action
+      business-object: request
+      connector-type: http
+      account-name: mxtririga
+      actions:
+        INVOKE: {}
+    action-interface-4:
+      type: api-action
+      business-object: testclient_model
+      connector-type: UDA.default.openapi.testClient
+      account-name: Account 1
+      actions:
+        testclient: {}
+  assemblies:
+    assembly-1:
+      assembly:
+        execute:
+          - set-variable:
+              name: Set variable
+              map:
+                $map: http://ibm.com/appconnect/map/v1
+                input:
+                  - variable: Request
+                    $ref: '#/trigger/payload'
+                customSchemas:
+                  properties.`variable`:
+                    type: object
+                    properties:
+                      member:
+                        type: array
+                        items:
+                          type: object
+                          properties: {}
+                mappings:
+                  - variable:
+                      mappings:
+                        - member:
+                            expression: >-
+                              $count(member) > 0 ? $Request.member:
+                              $append([],$$)
+          - parse:
+              name: JSON Parser Parse
+              parse-format: json
+              source:
+                template: '{{$Setvariable.variable}}'
+                input:
+                  - variable: Request
+                    $ref: '#/trigger/payload'
+                  - variable: Setvariable
+                    $ref: '#/node-output/Set variable/response/payload'
+              sample-data: |-
+                {
+                  "member": [
+                    {
+                      "ContentType": "sample_contenttype",
+                      "ancestor": "sample_ancestor",
+                      "assethealth": 1234567,
+                      "assetid": 1234567,
+                      "assetnum": "sample_assetnum",
+                      "assettag": "sample_assettag",
+                      "assettype": "sample_assettype",
+                      "autowogen": true,
+                      "binnum": "sample_binnum",
+                      "budgetcost": 1234567,
+                      "calnum": "sample_calnum",
+                      "changeby": "sample_changeby",
+                      "changedate": "YYYY-MM-DDT00:00:00.000Z",
+                      "changepmstatus": true,
+                      "children": true,
+                      "conditioncode": "sample_conditioncode",
+                      "customUniqueId": "sample_customuniqueid",
+                      "defaultrepfac": "sample_defaultrepfac",
+                      "defaultrepfacsiteid": "sample_defaultrepfacsiteid",
+                      "depreciationpending": true,
+                      "description": "sample_description",
+                      "description_longdescription": "sample_description_longdescription",
+                      "deviceid": "sample_deviceid",
+                      "devicetype": "sample_devicetype",
+                      "direction": "sample_direction",
+                      "disabled": true,
+                      "enddescription": "sample_enddescription",
+                      "endmeasure": 1234567,
+                      "eq1": "sample_eq1",
+                      "eq10": "sample_eq10",
+                      "eq11": "sample_eq11",
+                      "eq12": 1234567,
+                      "eq2": "sample_eq2",
+                      "eq23": "YYYY-MM-DDT00:00:00.000Z",
+                      "eq24": 1234567,
+                      "eq3": "sample_eq3",
+                      "eq4": "sample_eq4",
+                      "eq5": 1234567,
+                      "eq6": "YYYY-MM-DDT00:00:00.000Z",
+                      "eq7": 1234567,
+                      "eq8": "sample_eq8",
+                      "eq9": "sample_eq9",
+                      "estendoflife": "YYYY-MM-DDT00:00:00.000Z",
+                      "expectedlife": 1234567,
+                      "expectedlifedate": "YYYY-MM-DDT00:00:00.000Z",
+                      "externalrefid": "sample_externalrefid",
+                      "failurecode": "sample_failurecode",
+                      "fileContent": "sample_filecontent",
+                      "fileType": "sample_filetype",
+                      "glaccount": "sample_glaccount",
+                      "groupname": "sample_groupname",
+                      "hierarchypath": "sample_hierarchypath",
+                      "industryhealthgrade": "sample_industryhealthgrade",
+                      "industryhealthscore": 1234567,
+                      "installdate": "YYYY-MM-DDT00:00:00.000Z",
+                      "invcost": 1234567,
+                      "iscalibration": true,
+                      "islinear": true,
+                      "isrunning": true,
+                      "itemnum": "sample_itemnum",
+                      "itemsetid": "sample_itemsetid",
+                      "itemtype": "sample_itemtype",
+                      "location": "sample_location",
+                      "lrm": "sample_lrm",
+                      "mainthierchy": true,
+                      "manufacturer": "sample_manufacturer",
+                      "modelid": "sample_modelid",
+                      "moved": true,
+                      "newsite": "sample_newsite",
+                      "nextPageToken": "sample_nextpagetoken",
+                      "orgid": "sample_orgid",
+                      "ownersysid": "sample_ownersysid",
+                      "pageSize": 1234567,
+                      "parent": "sample_parent",
+                      "pluscassetdept": "sample_pluscassetdept",
+                      "pluscclass": "sample_pluscclass",
+                      "pluscduedate": "YYYY-MM-DDT00:00:00.000Z",
+                      "plusciscondesc": "sample_plusciscondesc",
+                      "plusciscontam": true,
+                      "pluscisinhousecal": true,
+                      "pluscismte": true,
+                      "pluscismteclass": "sample_pluscismteclass",
+                      "pluscloopnum": "sample_pluscloopnum",
+                      "plusclploc": "sample_plusclploc",
+                      "pluscmodelnum": "sample_pluscmodelnum",
+                      "pluscoprgeeu": "sample_pluscoprgeeu",
+                      "pluscoprgefrom": "sample_pluscoprgefrom",
+                      "pluscoprgeto": "sample_pluscoprgeto",
+                      "pluscphyloc": "sample_pluscphyloc",
+                      "pluscpmextdate": true,
+                      "pluscsolution": true,
+                      "pluscsumdir": "sample_pluscsumdir",
+                      "pluscsumeu": "sample_pluscsumeu",
+                      "pluscsumread": "sample_pluscsumread",
+                      "pluscsumspan": "sample_pluscsumspan",
+                      "pluscsumurv": "sample_pluscsumurv",
+                      "pluscvendor": "sample_pluscvendor",
+                      "pmnextfaildt": "YYYY-MM-DDT00:00:00.000Z",
+                      "priority": "High",
+                      "productid": "sample_productid",
+                      "purchaseprice": 1234567,
+                      "removefromactiveroutes": true,
+                      "removefromactivesp": true,
+                      "replacecost": 1234567,
+                      "returnedtovendor": true,
+                      "rolltoallchildren": true,
+                      "rotsuspacct": "sample_rotsuspacct",
+                      "saddresscode": "sample_saddresscode",
+                      "sendersysid": "sample_sendersysid",
+                      "serialnum": "sample_serialnum",
+                      "shiftnum": "sample_shiftnum",
+                      "siteid": "sample_siteid",
+                      "sourcesysid": "sample_sourcesysid",
+                      "startdescription": "sample_startdescription",
+                      "startmeasure": 1234567,
+                      "status": "sample_status",
+                      "statusdate": "YYYY-MM-DDT00:00:00.000Z",
+                      "templateid": "sample_templateid",
+                      "tloamhash": "sample_tloamhash",
+                      "tloampartition": true,
+                      "toolcontrolaccount": "sample_toolcontrolaccount",
+                      "toolrate": 1234567,
+                      "totalcost": 1234567,
+                      "totdowntime": 1234567,
+                      "totunchargedcost": 1234567,
+                      "unchargedcost": 1234567,
+                      "usage": "sample_usage",
+                      "vendor": "sample_vendor",
+                      "warrantyexpdate": "YYYY-MM-DDT00:00:00.000Z",
+                      "well_maintained": 1234567,
+                      "ytdcost": 1234567
+                    }
+                  ]
+                }
+              output-schema:
+                $schema: http://json-schema.org/draft-04/schema#
+                type: object
+                properties:
+                  member:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        ContentType:
+                          type: string
+                        ancestor:
+                          type: string
+                        assethealth:
+                          type: number
+                        assetid:
+                          type: number
+                        assetnum:
+                          type: string
+                        assettag:
+                          type: string
+                        assettype:
+                          type: string
+                        autowogen:
+                          type: boolean
+                        binnum:
+                          type: string
+                        budgetcost:
+                          type: number
+                        calnum:
+                          type: string
+                        changeby:
+                          type: string
+                        changedate:
+                          type: string
+                        changepmstatus:
+                          type: boolean
+                        children:
+                          type: boolean
+                        conditioncode:
+                          type: string
+                        customUniqueId:
+                          type: string
+                        defaultrepfac:
+                          type: string
+                        defaultrepfacsiteid:
+                          type: string
+                        depreciationpending:
+                          type: boolean
+                        description:
+                          type: string
+                        description_longdescription:
+                          type: string
+                        deviceid:
+                          type: string
+                        devicetype:
+                          type: string
+                        direction:
+                          type: string
+                        disabled:
+                          type: boolean
+                        enddescription:
+                          type: string
+                        endmeasure:
+                          type: number
+                        eq1:
+                          type: string
+                        eq10:
+                          type: string
+                        eq11:
+                          type: string
+                        eq12:
+                          type: number
+                        eq2:
+                          type: string
+                        eq23:
+                          type: string
+                        eq24:
+                          type: number
+                        eq3:
+                          type: string
+                        eq4:
+                          type: string
+                        eq5:
+                          type: number
+                        eq6:
+                          type: string
+                        eq7:
+                          type: number
+                        eq8:
+                          type: string
+                        eq9:
+                          type: string
+                        estendoflife:
+                          type: string
+                        expectedlife:
+                          type: number
+                        expectedlifedate:
+                          type: string
+                        externalrefid:
+                          type: string
+                        failurecode:
+                          type: string
+                        fileContent:
+                          type: string
+                        fileType:
+                          type: string
+                        glaccount:
+                          type: string
+                        groupname:
+                          type: string
+                        hierarchypath:
+                          type: string
+                        industryhealthgrade:
+                          type: string
+                        industryhealthscore:
+                          type: number
+                        installdate:
+                          type: string
+                        invcost:
+                          type: number
+                        iscalibration:
+                          type: boolean
+                        islinear:
+                          type: boolean
+                        isrunning:
+                          type: boolean
+                        itemnum:
+                          type: string
+                        itemsetid:
+                          type: string
+                        itemtype:
+                          type: string
+                        location:
+                          type: string
+                        lrm:
+                          type: string
+                        mainthierchy:
+                          type: boolean
+                        manufacturer:
+                          type: string
+                        modelid:
+                          type: string
+                        moved:
+                          type: boolean
+                        newsite:
+                          type: string
+                        nextPageToken:
+                          type: string
+                        orgid:
+                          type: string
+                        ownersysid:
+                          type: string
+                        pageSize:
+                          type: number
+                        parent:
+                          type: string
+                        pluscassetdept:
+                          type: string
+                        pluscclass:
+                          type: string
+                        pluscduedate:
+                          type: string
+                        plusciscondesc:
+                          type: string
+                        plusciscontam:
+                          type: boolean
+                        pluscisinhousecal:
+                          type: boolean
+                        pluscismte:
+                          type: boolean
+                        pluscismteclass:
+                          type: string
+                        pluscloopnum:
+                          type: string
+                        plusclploc:
+                          type: string
+                        pluscmodelnum:
+                          type: string
+                        pluscoprgeeu:
+                          type: string
+                        pluscoprgefrom:
+                          type: string
+                        pluscoprgeto:
+                          type: string
+                        pluscphyloc:
+                          type: string
+                        pluscpmextdate:
+                          type: boolean
+                        pluscsolution:
+                          type: boolean
+                        pluscsumdir:
+                          type: string
+                        pluscsumeu:
+                          type: string
+                        pluscsumread:
+                          type: string
+                        pluscsumspan:
+                          type: string
+                        pluscsumurv:
+                          type: string
+                        pluscvendor:
+                          type: string
+                        pmnextfaildt:
+                          type: string
+                        priority:
+                          type: string
+                        productid:
+                          type: string
+                        purchaseprice:
+                          type: number
+                        removefromactiveroutes:
+                          type: boolean
+                        removefromactivesp:
+                          type: boolean
+                        replacecost:
+                          type: number
+                        returnedtovendor:
+                          type: boolean
+                        rolltoallchildren:
+                          type: boolean
+                        rotsuspacct:
+                          type: string
+                        saddresscode:
+                          type: string
+                        sendersysid:
+                          type: string
+                        serialnum:
+                          type: string
+                        shiftnum:
+                          type: string
+                        siteid:
+                          type: string
+                        sourcesysid:
+                          type: string
+                        startdescription:
+                          type: string
+                        startmeasure:
+                          type: number
+                        status:
+                          type: string
+                        statusdate:
+                          type: string
+                        templateid:
+                          type: string
+                        tloamhash:
+                          type: string
+                        tloampartition:
+                          type: boolean
+                        toolcontrolaccount:
+                          type: string
+                        toolrate:
+                          type: number
+                        totalcost:
+                          type: number
+                        totdowntime:
+                          type: number
+                        totunchargedcost:
+                          type: number
+                        unchargedcost:
+                          type: number
+                        usage:
+                          type: string
+                        vendor:
+                          type: string
+                        warrantyexpdate:
+                          type: string
+                        well_maintained:
+                          type: number
+                        ytdcost:
+                          type: number
+                title: Parsed JSON
+          - for-each:
+              name: For each
+              assembly:
+                $ref: '#/integration/assemblies/assembly-2'
+              source:
+                expression: '$JSONParserParse.member '
+                input:
+                  - variable: Request
+                    $ref: '#/trigger/payload'
+                  - variable: Setvariable
+                    $ref: '#/node-output/Set variable/response/payload'
+                  - variable: JSONParserParse
+                    $ref: '#/node-output/JSON Parser Parse/response/payload'
+              mode: sequential
+              continue-on-error: true
+              map:
+                $map: http://ibm.com/appconnect/map/v1
+                input:
+                  - variable: Foreachitem
+                    $ref: '#/block/For each/current-item'
+                  - variable: Request
+                    $ref: '#/trigger/payload'
+                  - variable: Setvariable2
+                    $ref: >-
+                      #/block/For each/node-output/Set variable
+                      2/response/payload
+                  - variable: Setvariable3
+                    $ref: >-
+                      #/block/For each/node-output/Set variable
+                      3/response/payload
+                  - variable: testClientPOSTtestclient
+                    $ref: >-
+                      #/block/For each/node-output/testClient POST
+                      testclient/response/payload
+                  - variable: testClientPOSTtestclientMetadata
+                    $ref: >-
+                      #/block/For each/node-output/testClient POST
+                      testclient/response
+                  - variable: HTTPInvokemethod
+                    $ref: >-
+                      #/block/For each/node-output/HTTP Invoke
+                      method/response/payload
+                  - variable: HTTPInvokemethodMetadata
+                    $ref: '#/block/For each/node-output/HTTP Invoke method/response'
+                  - variable: testClientPOSTtestclient3
+                    $ref: >-
+                      #/block/For each/node-output/testClient POST testclient
+                      3/response/payload
+                  - variable: testClientPOSTtestclient3Metadata
+                    $ref: >-
+                      #/block/For each/node-output/testClient POST testclient
+                      3/response
+                  - variable: Setvariable
+                    $ref: '#/node-output/Set variable/response/payload'
+                  - variable: JSONParserParse
+                    $ref: '#/node-output/JSON Parser Parse/response/payload'
+                customSchemas: {}
+                mappings: []
+              display-name: Maximo Asset
+          - response:
+              name: response-1
+              reply-maps:
+                - title: triAsset successfully add custom operation
+                  status-code: '200'
+                  map:
+                    $map: http://ibm.com/appconnect/map/v1
+                    input:
+                      - variable: Request
+                        $ref: '#/trigger/payload'
+                      - variable: Setvariable
+                        $ref: '#/node-output/Set variable/response/payload'
+                      - variable: JSONParserParse
+                        $ref: '#/node-output/JSON Parser Parse/response/payload'
+                      - variable: Foreach
+                        $ref: '#/node-output/For each/response/payload'
+                    mappings: []
+                  input:
+                    - variable: Request
+                      $ref: '#/trigger/payload'
+                    - variable: Setvariable
+                      $ref: '#/node-output/Set variable/response/payload'
+                    - variable: JSONParserParse
+                      $ref: '#/node-output/JSON Parser Parse/response/payload'
+                    - variable: Foreach
+                      $ref: '#/node-output/For each/response/payload'
+    assembly-2:
+      assembly:
+        execute:
+          - set-variable:
+              name: Set variable 2
+              map:
+                $map: http://ibm.com/appconnect/map/v1
+                input:
+                  - variable: Foreachitem
+                    $ref: '#/block/For each/current-item'
+                  - variable: Request
+                    $ref: '#/trigger/payload'
+                  - variable: Setvariable
+                    $ref: '#/node-output/Set variable/response/payload'
+                  - variable: JSONParserParse
+                    $ref: '#/node-output/JSON Parser Parse/response/payload'
+                customSchemas:
+                  properties.`variable`:
+                    type: object
+                    properties:
+                      triAssetPayload:
+                        type: object
+                        properties:
+                          action:
+                            type: string
+                          triOperationTX:
+                            type: string
+                          triExternalReferenceTX:
+                            type: string
+                          triNameTX:
+                            type: string
+                          triSerialNumTX:
+                            type: string
+                          SysReserveFlag:
+                            type: string
+                          triMaintenancePriorityCL:
+                            type: string
+                          triSpecNameTX:
+                            type: string
+                          triActiveStartDA:
+                            type: string
+                          triIdTX:
+                            type: string
+                          TestEmpty:
+                            type: string
+                mappings:
+                  - variable:
+                      mappings:
+                        - triAssetPayload:
+                            mappings:
+                              - SysReserveFlag:
+                                  template: 'FALSE'
+                              - action:
+                                  template: Create Draft
+                              - triActiveStartDA:
+                                  template: '{{$Foreachitem.installdate}}'
+                              - triExternalReferenceTX:
+                                  template: '{{$Foreachitem."_id"}}'
+                              - triIdTX:
+                                  template: '{{$Foreachitem.assetnum}}'
+                              - triMaintenancePriorityCL:
+                                  template: >-
+                                    {{$Foreachitem.priority in
+                                    ["High","Medium","Low"] ?
+                                    $Foreachitem.priority}}
+                              - triNameTX:
+                                  template: '{{$Foreachitem.description}}'
+                              - triOperationTX:
+                                  template: Create/Update
+                              - triSerialNumTX:
+                                  template: '{{$Foreachitem.serialnum}}'
+                              - triSpecNameTX:
+                                  template: Maximo-Spec
+          - set-variable:
+              name: Set variable 3
+              map:
+                $map: http://ibm.com/appconnect/map/v1
+                input:
+                  - variable: Foreachitem
+                    $ref: '#/block/For each/current-item'
+                  - variable: Request
+                    $ref: '#/trigger/payload'
+                  - variable: Setvariable2
+                    $ref: >-
+                      #/block/For each/node-output/Set variable
+                      2/response/payload
+                  - variable: Setvariable
+                    $ref: '#/node-output/Set variable/response/payload'
+                  - variable: JSONParserParse
+                    $ref: '#/node-output/JSON Parser Parse/response/payload'
+                customSchemas:
+                  properties.`variable`:
+                    type: object
+                    properties:
+                      triAssetWithNS:
+                        type: object
+                        properties: {}
+                mappings:
+                  - variable:
+                      mappings:
+                        - triAssetWithNS:
+                            expression: >-
+                              (    $ns:= "spi:";    $applyNS := function($prop)
+                              {        $type($prop) = "object" ?          
+                              $count($keys($prop)) > 0 ?           $applyNSObj
+                              := $each($prop, function($v, $k) {               
+                              $type($v) = "object"  or $type($v) = "array" ?
+                              {$ns & $k: $applyNS($v)} :                 {$ns &
+                              $k : $v}                }) ~> $merge() : {}    
+                              :        $type($prop) = "array" ?           
+                              $count($prop) > 0 ?            $applyNSArr :=
+                              $map($prop, function($v){                $type($v)
+                              = "object"  or $type($v) = "array" ? $applyNS($v)
+                              : $v            })[] : []    };   
+                              $sift($applyNS($Setvariable2.variable.triAssetPayload),
+                              function($v){$boolean($v)});)
+          - custom-action:
+              name: testClient POST testclient
+              target:
+                $ref: '#/integration/action-interfaces/action-interface-1'
+              action: testclient
+              map:
+                customSchemas:
+                  properties.`body`:
+                    type: object
+                    properties:
+                      fromMaximo:
+                        type: object
+                        properties: {}
+                      toTririga:
+                        type: object
+                        properties: {}
+                mappings:
+                  - body:
+                      mappings:
+                        - fromMaximo:
+                            expression: '$Foreachitem '
+                        - toTririga:
+                            expression: '$Setvariable3.variable.triAssetWithNS '
+                $map: http://ibm.com/appconnect/map/v1
+                input:
+                  - variable: Foreachitem
+                    $ref: '#/block/For each/current-item'
+                  - variable: Request
+                    $ref: '#/trigger/payload'
+                  - variable: Setvariable2
+                    $ref: >-
+                      #/block/For each/node-output/Set variable
+                      2/response/payload
+                  - variable: Setvariable3
+                    $ref: >-
+                      #/block/For each/node-output/Set variable
+                      3/response/payload
+                  - variable: Setvariable
+                    $ref: '#/node-output/Set variable/response/payload'
+                  - variable: JSONParserParse
+                    $ref: '#/node-output/JSON Parser Parse/response/payload'
+          - custom-action:
+              name: HTTP Invoke method
+              target:
+                $ref: '#/integration/action-interfaces/action-interface-3'
+              action: INVOKE
+              map:
+                customSchemas:
+                  properties.`requestHeaders`:
+                    type: object
+                    properties:
+                      Content-Type:
+                        type: string
+                      Properties:
+                        type: string
+                mappings:
+                  - continue2xx:
+                      expression: 'false'
+                  - method:
+                      template: POST
+                  - requestBody:
+                      template: '{{$Setvariable3.variable.triAssetWithNS}}'
+                  - requestHeaders:
+                      mappings:
+                        - Content-Type:
+                            template: application/json
+                        - Properties:
+                            template: spi:triUserMessageTX
+                  - url:
+                      template: http://9.30.43.110:8001/oslc/so/triAPICAssetCF
+                $map: http://ibm.com/appconnect/map/v1
+                input:
+                  - variable: Foreachitem
+                    $ref: '#/block/For each/current-item'
+                  - variable: Request
+                    $ref: '#/trigger/payload'
+                  - variable: Setvariable2
+                    $ref: >-
+                      #/block/For each/node-output/Set variable
+                      2/response/payload
+                  - variable: Setvariable3
+                    $ref: >-
+                      #/block/For each/node-output/Set variable
+                      3/response/payload
+                  - variable: testClientPOSTtestclient
+                    $ref: >-
+                      #/block/For each/node-output/testClient POST
+                      testclient/response/payload
+                  - variable: testClientPOSTtestclientMetadata
+                    $ref: >-
+                      #/block/For each/node-output/testClient POST
+                      testclient/response
+                  - variable: Setvariable
+                    $ref: '#/node-output/Set variable/response/payload'
+                  - variable: JSONParserParse
+                    $ref: '#/node-output/JSON Parser Parse/response/payload'
+          - custom-action:
+              name: testClient POST testclient 3
+              target:
+                $ref: '#/integration/action-interfaces/action-interface-4'
+              action: testclient
+              map:
+                customSchemas:
+                  properties.`body`:
+                    type: object
+                    properties:
+                      TRIresponse:
+                        type: object
+                        properties: {}
+                mappings:
+                  - body:
+                      mappings:
+                        - TRIresponse:
+                            expression: '$HTTPInvokemethodMetadata '
+                $map: http://ibm.com/appconnect/map/v1
+                input:
+                  - variable: Foreachitem
+                    $ref: '#/block/For each/current-item'
+                  - variable: Request
+                    $ref: '#/trigger/payload'
+                  - variable: Setvariable2
+                    $ref: >-
+                      #/block/For each/node-output/Set variable
+                      2/response/payload
+                  - variable: Setvariable3
+                    $ref: >-
+                      #/block/For each/node-output/Set variable
+                      3/response/payload
+                  - variable: testClientPOSTtestclient
+                    $ref: >-
+                      #/block/For each/node-output/testClient POST
+                      testclient/response/payload
+                  - variable: testClientPOSTtestclientMetadata
+                    $ref: >-
+                      #/block/For each/node-output/testClient POST
+                      testclient/response
+                  - variable: HTTPInvokemethod
+                    $ref: >-
+                      #/block/For each/node-output/HTTP Invoke
+                      method/response/payload
+                  - variable: HTTPInvokemethodMetadata
+                    $ref: '#/block/For each/node-output/HTTP Invoke method/response'
+                  - variable: Setvariable
+                    $ref: '#/node-output/Set variable/response/payload'
+                  - variable: JSONParserParse
+                    $ref: '#/node-output/JSON Parser Parse/response/payload'
+  name: PLUSTMXAsset2TRI
+models:
+  triAsset:
+    name: triAsset
+    properties:
+      dummyID:
+        required: false
+        id: true
+        type: string
+    plural: triAsset
+    description: ' '
+    operations:
+      syncasset: '#/integration/assemblies/assembly-1'
+    methods:
+      syncasset:
+        name: syncasset
+        display:
+          name: syncAsset
+        accessType: WRITE
+        accepts:
+          - arg: data
+            type: mxAsset
+            http:
+              source: body
+        returns:
+          arg: data
+          type: triAsset
+          root: true
+        http:
+          verb: POST
+          path: /syncasset
+        description: Send ASSET from Maximo to Tririga.
+  mxAsset:
+    name: mxAsset
+    properties:
+      dummyID:
+        required: false
+        id: true
+        type: string
+      member:
+        required: false
+        id: false
+        type:
+          - type: {}
+    plural: mxAsset
+    description: ' '
+    operations: {}

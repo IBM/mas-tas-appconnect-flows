@@ -1,0 +1,655 @@
+$integration: http://ibm.com/appconnect/integration/v2/integrationFile
+integration:
+  type: api
+  trigger-interfaces:
+    trigger-interface-1:
+      triggers:
+        syncpersonTriPerson:
+          assembly:
+            $ref: '#/integration/assemblies/assembly-1'
+          input-context:
+            data: mxPerson
+          output-context:
+            data: triPerson
+      options:
+        resources:
+          - business-object: triPerson
+            model:
+              $ref: '#/models/triPerson'
+            triggers:
+              syncperson: syncpersonTriPerson
+          - business-object: mxPerson
+            model:
+              $ref: '#/models/mxPerson'
+            triggers: {}
+      type: api-trigger
+  action-interfaces:
+    action-interface-3:
+      type: api-action
+      business-object: request
+      connector-type: http
+      account-name: mxtririga
+      actions:
+        INVOKE: {}
+    action-interface-1:
+      type: api-action
+      business-object: testclient_model
+      connector-type: UDA.default.openapi.testClient
+      account-name: Account 1
+      actions:
+        testclient: {}
+  assemblies:
+    assembly-1:
+      assembly:
+        execute:
+          - set-variable:
+              name: Set variable 4
+              map:
+                $map: http://ibm.com/appconnect/map/v1
+                input:
+                  - variable: Request
+                    $ref: '#/trigger/payload'
+                customSchemas:
+                  properties.`variable`:
+                    type: object
+                    properties:
+                      member:
+                        type: array
+                        items:
+                          type: object
+                          properties: {}
+                mappings:
+                  - variable:
+                      mappings:
+                        - member:
+                            expression: >-
+                              $count(member) > 0 ? $Request.member:
+                              $append([],$$)
+          - parse:
+              name: JSON Parser Parse
+              parse-format: json
+              source:
+                template: '{{$Setvariable4.variable}}'
+                input:
+                  - variable: Request
+                    $ref: '#/trigger/payload'
+                  - variable: Setvariable4
+                    $ref: '#/node-output/Set variable 4/response/payload'
+              sample-data: |-
+                {
+                   "member": [
+                      {
+                         "_id": "WILSON",
+                         "acceptingwfmail": true,
+                         "addressline1": "40 Lewis Street",
+                         "birthdate": "1958-02-17T00:00:00-08:00",
+                         "city": "Boston",
+                         "country": "US",
+                         "displayname": "Mike Wilson",
+                         "email": [
+                            {
+                               "emailaddress": "m.wilson@helwig.com",
+                               "emailid": 145822,
+                               "isprimary": true,
+                               "type": "WORK",
+                               "type_description": "Work Email Address"
+                            }
+                         ],
+                         "firstname": "Mike",
+                         "hiredate": "1986-04-20T00:00:00-08:00",
+                         "lastevaldate": "2002-02-14T00:00:00-08:00",
+                         "terminationdate": "1990-04-20T00:00:00-08:00",
+                         "lastname": "Wilson",
+                         "locationorg": "EAGLENA",
+                         "locationsite": "BEDFORD",
+                         "loctoservreq": true,
+                         "nextevaldate": "2003-02-17T00:00:00-08:00",
+                         "personid": "WILSON",
+                         "personuid": 1,
+                         "phone": [
+                            {
+                               "isprimary": true,
+                               "phoneid": 145822,
+                               "phonenum": "(617) 555-9017",
+                               "type": "WORK",
+                               "type_description": "Work Phone"
+                            }
+                         ],
+                         "postalcode": "02113",
+                         "primaryemail": "m.wilson@helwig.com",
+                         "primaryphone": "(617) 555-9017",
+                         "stateprovince": "MA",
+                         "status": "ACTIVE",
+                         "status_description": "Active",
+                         "statusdate": "2003-09-25T15:44:38-07:00",
+                         "statusiface": false,
+                         "transemailelection": "NEVER",
+                         "transemailelection_description": "Never Notify",
+                         "wfmailelection": "PROCESS",
+                         "wfmailelection_description": "Notify based on the process"
+                      }
+                     ]
+                }
+              output-schema:
+                $schema: http://json-schema.org/draft-04/schema#
+                type: object
+                properties:
+                  member:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                        acceptingwfmail:
+                          type: boolean
+                        addressline1:
+                          type: string
+                        birthdate:
+                          type: string
+                        city:
+                          type: string
+                        country:
+                          type: string
+                        displayname:
+                          type: string
+                        email:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              emailaddress:
+                                type: string
+                              emailid:
+                                type: number
+                              isprimary:
+                                type: boolean
+                              type:
+                                type: string
+                              type_description:
+                                type: string
+                        firstname:
+                          type: string
+                        hiredate:
+                          type: string
+                        lastevaldate:
+                          type: string
+                        terminationdate:
+                          type: string
+                        lastname:
+                          type: string
+                        locationorg:
+                          type: string
+                        locationsite:
+                          type: string
+                        loctoservreq:
+                          type: boolean
+                        nextevaldate:
+                          type: string
+                        personid:
+                          type: string
+                        personuid:
+                          type: number
+                        phone:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              isprimary:
+                                type: boolean
+                              phoneid:
+                                type: number
+                              phonenum:
+                                type: string
+                              type:
+                                type: string
+                              type_description:
+                                type: string
+                        postalcode:
+                          type: string
+                        primaryemail:
+                          type: string
+                        primaryphone:
+                          type: string
+                        stateprovince:
+                          type: string
+                        status:
+                          type: string
+                        status_description:
+                          type: string
+                        statusdate:
+                          type: string
+                        statusiface:
+                          type: boolean
+                        transemailelection:
+                          type: string
+                        transemailelection_description:
+                          type: string
+                        wfmailelection:
+                          type: string
+                        wfmailelection_description:
+                          type: string
+                title: Parsed JSON
+          - for-each:
+              name: For each
+              assembly:
+                $ref: '#/integration/assemblies/assembly-2'
+              source:
+                expression: '$JSONParserParse.member '
+                input:
+                  - variable: Request
+                    $ref: '#/trigger/payload'
+                  - variable: Setvariable4
+                    $ref: '#/node-output/Set variable 4/response/payload'
+                  - variable: JSONParserParse
+                    $ref: '#/node-output/JSON Parser Parse/response/payload'
+              mode: parallel
+              continue-on-error: true
+              map:
+                $map: http://ibm.com/appconnect/map/v1
+                input:
+                  - variable: Foreachitem
+                    $ref: '#/block/For each/current-item'
+                  - variable: Request
+                    $ref: '#/trigger/payload'
+                  - variable: Setvariable
+                    $ref: '#/block/For each/node-output/Set variable/response/payload'
+                  - variable: Setvariable2
+                    $ref: >-
+                      #/block/For each/node-output/Set variable
+                      2/response/payload
+                  - variable: testClientPOSTtestclient
+                    $ref: >-
+                      #/block/For each/node-output/testClient POST
+                      testclient/response/payload
+                  - variable: testClientPOSTtestclientMetadata
+                    $ref: >-
+                      #/block/For each/node-output/testClient POST
+                      testclient/response
+                  - variable: HTTPInvokemethod
+                    $ref: >-
+                      #/block/For each/node-output/HTTP Invoke
+                      method/response/payload
+                  - variable: HTTPInvokemethodMetadata
+                    $ref: '#/block/For each/node-output/HTTP Invoke method/response'
+                  - variable: Setvariable3
+                    $ref: >-
+                      #/block/For each/node-output/Set variable
+                      3/response/payload
+                  - variable: Setvariable4
+                    $ref: '#/node-output/Set variable 4/response/payload'
+                  - variable: JSONParserParse
+                    $ref: '#/node-output/JSON Parser Parse/response/payload'
+                customSchemas:
+                  properties.`output`:
+                    type: object
+                    properties:
+                      personSent:
+                        type: array
+                        items:
+                          type: object
+                          properties: {}
+                mappings:
+                  - output:
+                      mappings:
+                        - personSent:
+                            expression: $append([],$Setvariable2.variable.triPerson)
+              display-name: Maximo Person
+          - response:
+              name: response-1
+              reply-maps:
+                - title: triPerson successfully add custom operation
+                  status-code: '200'
+                  map:
+                    $map: http://ibm.com/appconnect/map/v1
+                    input:
+                      - variable: Request
+                        $ref: '#/trigger/payload'
+                      - variable: Setvariable4
+                        $ref: '#/node-output/Set variable 4/response/payload'
+                      - variable: JSONParserParse
+                        $ref: '#/node-output/JSON Parser Parse/response/payload'
+                      - variable: Foreach
+                        $ref: '#/node-output/For each/response/payload'
+                    mappings:
+                      - personSent:
+                          expression: '$Foreach.output.personSent '
+                  input:
+                    - variable: Request
+                      $ref: '#/trigger/payload'
+                    - variable: Setvariable4
+                      $ref: '#/node-output/Set variable 4/response/payload'
+                    - variable: JSONParserParse
+                      $ref: '#/node-output/JSON Parser Parse/response/payload'
+                    - variable: Foreach
+                      $ref: '#/node-output/For each/response/payload'
+    assembly-2:
+      assembly:
+        execute:
+          - set-variable:
+              name: Set variable
+              map:
+                $map: http://ibm.com/appconnect/map/v1
+                input:
+                  - variable: Foreachitem
+                    $ref: '#/block/For each/current-item'
+                  - variable: Request
+                    $ref: '#/trigger/payload'
+                  - variable: Setvariable4
+                    $ref: '#/node-output/Set variable 4/response/payload'
+                  - variable: JSONParserParse
+                    $ref: '#/node-output/JSON Parser Parse/response/payload'
+                customSchemas:
+                  properties.`variable`:
+                    type: object
+                    properties:
+                      action:
+                        type: string
+                      triOperationTX:
+                        type: string
+                      triSubOperationTX:
+                        type: string
+                      triExternalReferenceTX:
+                        type: string
+                      triPeopleTypeTX:
+                        type: string
+                      triIdTX:
+                        type: string
+                      triFirstNameTX:
+                        type: string
+                      triLastNameTX:
+                        type: string
+                      triUserNameTX:
+                        type: string
+                      triPrimaryLocPathTX:
+                        type: string
+                      triPrimaryOrgPathTX:
+                        type: string
+                      triAddressTX:
+                        type: string
+                      triZipPostalTX:
+                        type: string
+                      triCityTX:
+                        type: string
+                      triStateProvTX:
+                        type: string
+                      triCountryTX:
+                        type: string
+                      triActiveStartDA:
+                        type: string
+                      triActiveEndDA:
+                        type: string
+                      triEmailTX:
+                        type: string
+                      triWorkPhoneTX:
+                        type: string
+                      triPeopleTemplateTX:
+                        type: string
+                mappings:
+                  - variable:
+                      mappings:
+                        - action:
+                            template: Create Draft
+                        - triActiveEndDA:
+                            template: '{{$Foreachitem.terminationdate}}'
+                        - triActiveStartDA:
+                            template: '{{$Foreachitem.hiredate}}'
+                        - triAddressTX:
+                            template: '{{$Foreachitem.addressline1}}'
+                        - triCityTX:
+                            template: '{{$Foreachitem.city}}'
+                        - triCountryTX:
+                            template: '{{$Foreachitem.country}}'
+                        - triEmailTX:
+                            template: '{{$Foreachitem.primaryemail}}'
+                        - triExternalReferenceTX:
+                            template: '{{$Foreachitem.personid}}'
+                        - triFirstNameTX:
+                            template: '{{$Foreachitem.firstname}}'
+                        - triIdTX:
+                            template: '{{$Foreachitem.personid}}'
+                        - triLastNameTX:
+                            template: '{{$Foreachitem.lastname}}'
+                        - triOperationTX:
+                            template: Create/Update
+                        - triPeopleTemplateTX:
+                            template: Lease Manager
+                        - triPeopleTypeTX:
+                            template: Employee
+                        - triPrimaryLocPathTX:
+                            template: \\Locations\\Maximo Property\\Maximo Bldg
+                        - triPrimaryOrgPathTX:
+                            template: \\Organizations\\Maximo Org
+                        - triStateProvTX:
+                            template: '{{$Foreachitem.stateprovince}}'
+                        - triUserNameTX:
+                            template: '{{$Foreachitem.personid}}'
+                        - triWorkPhoneTX:
+                            template: '{{$Foreachitem.primaryphone}}'
+                        - triZipPostalTX:
+                            template: '{{$Foreachitem.postalcode}}'
+          - set-variable:
+              name: Set variable 2
+              map:
+                $map: http://ibm.com/appconnect/map/v1
+                input:
+                  - variable: Foreachitem
+                    $ref: '#/block/For each/current-item'
+                  - variable: Request
+                    $ref: '#/trigger/payload'
+                  - variable: Setvariable
+                    $ref: '#/block/For each/node-output/Set variable/response/payload'
+                  - variable: Setvariable4
+                    $ref: '#/node-output/Set variable 4/response/payload'
+                  - variable: JSONParserParse
+                    $ref: '#/node-output/JSON Parser Parse/response/payload'
+                customSchemas:
+                  properties.`variable`:
+                    type: object
+                    properties:
+                      triPerson:
+                        type: object
+                        properties: {}
+                mappings:
+                  - variable:
+                      mappings:
+                        - triPerson:
+                            expression: >-
+                              (    $ns:= "spi:";    $applyNS := function($prop)
+                              {        $type($prop) = "object" ?          
+                              $count($keys($prop)) > 0 ?           $applyNSObj
+                              := $each($prop, function($v, $k) {               
+                              $type($v) = "object"  or $type($v) = "array" ?
+                              {$ns & $k: $applyNS($v)} :                 {$ns &
+                              $k : $v}                }) ~> $merge() : {}    
+                              :        $type($prop) = "array" ?           
+                              $count($prop) > 0 ?            $applyNSArr :=
+                              $map($prop, function($v){                $type($v)
+                              = "object"  or $type($v) = "array" ? $applyNS($v)
+                              : $v            })[] : []    };   
+                              $sift($applyNS($Setvariable.variable),function($v){$boolean($v)});)
+          - custom-action:
+              name: testClient POST testclient
+              target:
+                $ref: '#/integration/action-interfaces/action-interface-1'
+              action: testclient
+              map:
+                mappings:
+                  - body:
+                      expression: '$Setvariable2.variable.triPerson '
+                $map: http://ibm.com/appconnect/map/v1
+                input:
+                  - variable: Foreachitem
+                    $ref: '#/block/For each/current-item'
+                  - variable: Request
+                    $ref: '#/trigger/payload'
+                  - variable: Setvariable
+                    $ref: '#/block/For each/node-output/Set variable/response/payload'
+                  - variable: Setvariable2
+                    $ref: >-
+                      #/block/For each/node-output/Set variable
+                      2/response/payload
+                  - variable: Setvariable4
+                    $ref: '#/node-output/Set variable 4/response/payload'
+                  - variable: JSONParserParse
+                    $ref: '#/node-output/JSON Parser Parse/response/payload'
+          - custom-action:
+              name: HTTP Invoke method
+              target:
+                $ref: '#/integration/action-interfaces/action-interface-3'
+              action: INVOKE
+              map:
+                customSchemas:
+                  properties.`requestHeaders`:
+                    type: object
+                    properties:
+                      Content-Type:
+                        type: string
+                      Properties:
+                        type: string
+                mappings:
+                  - continue2xx:
+                      expression: 'false'
+                  - method:
+                      template: POST
+                  - requestBody:
+                      template: '{{$Setvariable2.variable.triPerson}}'
+                  - requestHeaders:
+                      mappings:
+                        - Content-Type:
+                            template: application/json
+                        - Properties:
+                            template: spi:triUserMessageTX
+                  - url:
+                      template: http://9.30.43.110:8001/oslc/so/triAPICPeopleCF
+                $map: http://ibm.com/appconnect/map/v1
+                input:
+                  - variable: Foreachitem
+                    $ref: '#/block/For each/current-item'
+                  - variable: Request
+                    $ref: '#/trigger/payload'
+                  - variable: Setvariable
+                    $ref: '#/block/For each/node-output/Set variable/response/payload'
+                  - variable: Setvariable2
+                    $ref: >-
+                      #/block/For each/node-output/Set variable
+                      2/response/payload
+                  - variable: testClientPOSTtestclient
+                    $ref: >-
+                      #/block/For each/node-output/testClient POST
+                      testclient/response/payload
+                  - variable: testClientPOSTtestclientMetadata
+                    $ref: >-
+                      #/block/For each/node-output/testClient POST
+                      testclient/response
+                  - variable: Setvariable4
+                    $ref: '#/node-output/Set variable 4/response/payload'
+                  - variable: JSONParserParse
+                    $ref: '#/node-output/JSON Parser Parse/response/payload'
+          - set-variable:
+              name: Set variable 3
+              map:
+                $map: http://ibm.com/appconnect/map/v1
+                input:
+                  - variable: Foreachitem
+                    $ref: '#/block/For each/current-item'
+                  - variable: Request
+                    $ref: '#/trigger/payload'
+                  - variable: Setvariable
+                    $ref: '#/block/For each/node-output/Set variable/response/payload'
+                  - variable: Setvariable2
+                    $ref: >-
+                      #/block/For each/node-output/Set variable
+                      2/response/payload
+                  - variable: testClientPOSTtestclient
+                    $ref: >-
+                      #/block/For each/node-output/testClient POST
+                      testclient/response/payload
+                  - variable: testClientPOSTtestclientMetadata
+                    $ref: >-
+                      #/block/For each/node-output/testClient POST
+                      testclient/response
+                  - variable: HTTPInvokemethod
+                    $ref: >-
+                      #/block/For each/node-output/HTTP Invoke
+                      method/response/payload
+                  - variable: HTTPInvokemethodMetadata
+                    $ref: '#/block/For each/node-output/HTTP Invoke method/response'
+                  - variable: Setvariable4
+                    $ref: '#/node-output/Set variable 4/response/payload'
+                  - variable: JSONParserParse
+                    $ref: '#/node-output/JSON Parser Parse/response/payload'
+                customSchemas:
+                  properties.`variable`:
+                    type: object
+                    properties:
+                      personSent:
+                        type: object
+                        properties:
+                          triPayload:
+                            type: object
+                            properties: {}
+                          triResponse:
+                            type: object
+                            properties: {}
+                mappings:
+                  - variable:
+                      mappings:
+                        - personSent:
+                            mappings:
+                              - triPayload:
+                                  expression: '$Setvariable2.variable.triPerson '
+                              - triResponse:
+                                  expression: '$HTTPInvokemethodMetadata '
+  name: PLUSTMXPerson2TRI
+models:
+  triPerson:
+    name: triPerson
+    properties:
+      dummyID:
+        required: false
+        id: true
+        type: string
+      personSent:
+        required: false
+        id: false
+        type:
+          - type: {}
+    plural: triPerson
+    description: ' '
+    operations:
+      syncperson: '#/integration/assemblies/assembly-1'
+    methods:
+      syncperson:
+        name: syncperson
+        display:
+          name: syncPerson
+        accessType: WRITE
+        accepts:
+          - arg: data
+            type: mxPerson
+            http:
+              source: body
+        returns:
+          arg: data
+          type: triPerson
+          root: true
+        http:
+          verb: POST
+          path: /syncperson
+        description: Send PERSON record from Maximo to Tririga.
+  mxPerson:
+    name: mxPerson
+    properties:
+      dummyID:
+        required: false
+        id: true
+        type: string
+      member:
+        required: false
+        id: false
+        type:
+          - type: {}
+    plural: mxPerson
+    description: ' '
+    operations: {}

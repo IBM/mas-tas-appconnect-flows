@@ -1,0 +1,522 @@
+$integration: http://ibm.com/appconnect/integration/v2/integrationFile
+integration:
+  type: api
+  trigger-interfaces:
+    trigger-interface-1:
+      triggers:
+        synclocationMxLocation:
+          assembly:
+            $ref: '#/integration/assemblies/assembly-2'
+          input-context:
+            data: triSpace
+          output-context:
+            data: mxLocation
+      options:
+        resources:
+          - business-object: mxLocation
+            model:
+              $ref: '#/models/mxLocation'
+            triggers:
+              synclocation: synclocationMxLocation
+          - business-object: triSpace
+            model:
+              $ref: '#/models/triSpace'
+            triggers: {}
+      type: api-trigger
+  action-interfaces:
+    action-interface-1:
+      type: api-action
+      business-object: testclient_model
+      connector-type: UDA.default.openapi.testClient
+      account-name: Account 1
+      actions:
+        testclient: {}
+    action-interface-4:
+      type: api-action
+      business-object: request
+      connector-type: http
+      account-name: mxtririgaoxytocin
+      actions:
+        INVOKE: {}
+  assemblies:
+    assembly-2:
+      assembly:
+        execute:
+          - set-variable:
+              name: Set variable 3
+              map:
+                $map: http://ibm.com/appconnect/map/v1
+                input:
+                  - variable: Request
+                    $ref: '#/trigger/payload'
+                customSchemas:
+                  properties.`variable`:
+                    type: object
+                    properties:
+                      maximoorgid:
+                        type: string
+                      maximositeid:
+                        type: string
+                      locationtype:
+                        type: string
+                mappings:
+                  - variable:
+                      mappings:
+                        - locationtype:
+                            template: OPERATING
+                        - maximoorgid:
+                            template: TRIRIGA
+                        - maximositeid:
+                            template: TRIMAIN
+          - parse:
+              name: JSON Parser Parse
+              parse-format: json
+              source:
+                template: '{{$Request}}'
+                input:
+                  - variable: Request
+                    $ref: '#/trigger/payload'
+                  - variable: Setvariable3
+                    $ref: '#/node-output/Set variable 3/response/payload'
+              sample-data: |-
+                {
+                   "data":[
+                      {
+                         "Status":"Active",
+                         "Description":"Demo Space Record",
+                         "Primary Fax":"ABC",
+                         "boId":10002873,
+                         "Primary Mail Stop":"556",
+                         "Hierarchy Path":"\\Locations\\Property 08\\Bldg 07\\Floor 15\\Space 01",
+                         "Primary Phone":"123-567-9086",
+                         "Current Use Space Path":"\\Classifications\\Space Class Current\\Alternative Workplace\\Home Office",
+                         "Parent Floor":"Floor 15",
+                         "Name":"Space 01",
+                         "Capacity Factor":"4",
+                         "recordId":135501660,
+                         "Area":"2000",
+                         "Area Units":"square-feet",
+                         "Reservable":"FALSE",
+                         "Capacity":"12",
+                         "ID":"SPC-001",
+                         "Bar Code Entry":"123",
+                         "Current Use Space Class":"Home Office",
+                         "Hazardous Materials":"TRUE"
+                      }
+                   ],
+                   "continueToken":"",
+                   "header":[
+                      "ID",
+                      "Name",
+                      "Description",
+                      "Bar Code Entry",
+                      "Primary Phone",
+                      "Primary Fax",
+                      "Primary Mail Stop",
+                      "Hazardous Materials",
+                      "Reservable",
+                      "Area",
+                      "Current Use Space Class",
+                      "Capacity",
+                      "Capacity Factor",
+                      "Parent Floor",
+                      "Area Units"
+                   ],
+                   "totalRows":1
+                }
+              output-schema:
+                $schema: http://json-schema.org/draft-04/schema#
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        Status:
+                          type: string
+                        Description:
+                          type: string
+                        Primary Fax:
+                          type: string
+                        boId:
+                          type: number
+                        Primary Mail Stop:
+                          type: string
+                        Hierarchy Path:
+                          type: string
+                        Primary Phone:
+                          type: string
+                        Current Use Space Path:
+                          type: string
+                        Parent Floor:
+                          type: string
+                        Name:
+                          type: string
+                        Capacity Factor:
+                          type: string
+                        recordId:
+                          type: number
+                        Area:
+                          type: string
+                        Area Units:
+                          type: string
+                        Reservable:
+                          type: string
+                        Capacity:
+                          type: string
+                        ID:
+                          type: string
+                        Bar Code Entry:
+                          type: string
+                        Current Use Space Class:
+                          type: string
+                        Hazardous Materials:
+                          type: string
+                  continueToken:
+                    type: string
+                  header:
+                    type: array
+                    items:
+                      type: string
+                  totalRows:
+                    type: number
+                title: Parsed JSON
+          - for-each:
+              name: For each
+              assembly:
+                $ref: '#/integration/assemblies/assembly-3'
+              source:
+                expression: '$JSONParserParse.data '
+                input:
+                  - variable: Request
+                    $ref: '#/trigger/payload'
+                  - variable: JSONParserParse
+                    $ref: '#/node-output/JSON Parser Parse/response/payload'
+              mode: parallel
+              continue-on-error: false
+              map:
+                $map: http://ibm.com/appconnect/map/v1
+                input:
+                  - variable: Foreachitem
+                    $ref: '#/block/For each/current-item'
+                  - variable: Request
+                    $ref: '#/trigger/payload'
+                  - variable: Setvariable
+                    $ref: '#/block/For each/node-output/Set variable/response/payload'
+                  - variable: testClientPOSTtestclient
+                    $ref: >-
+                      #/block/For each/node-output/testClient POST
+                      testclient/response/payload
+                  - variable: testClientPOSTtestclientMetadata
+                    $ref: >-
+                      #/block/For each/node-output/testClient POST
+                      testclient/response
+                  - variable: HTTPInvokemethod
+                    $ref: >-
+                      #/block/For each/node-output/HTTP Invoke
+                      method/response/payload
+                  - variable: HTTPInvokemethodMetadata
+                    $ref: '#/block/For each/node-output/HTTP Invoke method/response'
+                  - variable: Setvariable2
+                    $ref: >-
+                      #/block/For each/node-output/Set variable
+                      2/response/payload
+                  - variable: JSONParserParse
+                    $ref: '#/node-output/JSON Parser Parse/response/payload'
+                customSchemas:
+                  properties.`output`:
+                    type: object
+                    properties:
+                      locationSent:
+                        type: array
+                        items:
+                          type: object
+                          properties: {}
+                mappings:
+                  - output:
+                      mappings:
+                        - locationSent:
+                            expression: $append([],$Setvariable2.variable.locationSent)
+              display-name: Tririga SPACE
+          - response:
+              name: response-1
+              reply-maps:
+                - title: mxLocation successfully add custom operation
+                  status-code: '200'
+                  map:
+                    $map: http://ibm.com/appconnect/map/v1
+                    input:
+                      - variable: Request
+                        $ref: '#/trigger/payload'
+                      - variable: JSONParserParse
+                        $ref: '#/node-output/JSON Parser Parse/response/payload'
+                      - variable: Foreach
+                        $ref: '#/node-output/For each/response/payload'
+                    mappings:
+                      - spaceSent:
+                          expression: '$Foreach.output.locationSent '
+                  input:
+                    - variable: Request
+                      $ref: '#/trigger/payload'
+                    - variable: JSONParserParse
+                      $ref: '#/node-output/JSON Parser Parse/response/payload'
+                    - variable: Foreach
+                      $ref: '#/node-output/For each/response/payload'
+    assembly-3:
+      assembly:
+        execute:
+          - set-variable:
+              name: Set variable
+              map:
+                $map: http://ibm.com/appconnect/map/v1
+                input:
+                  - variable: Foreachitem
+                    $ref: '#/block/For each/current-item'
+                  - variable: Request
+                    $ref: '#/trigger/payload'
+                  - variable: Setvariable3
+                    $ref: '#/node-output/Set variable 3/response/payload'
+                  - variable: JSONParserParse
+                    $ref: '#/node-output/JSON Parser Parse/response/payload'
+                customSchemas:
+                  properties.`variable`:
+                    type: object
+                    properties:
+                      mxlocation:
+                        type: object
+                        properties:
+                          location:
+                            type: string
+                          orgid:
+                            type: string
+                          siteid:
+                            type: string
+                          status:
+                            type: string
+                          description:
+                            type: string
+                          triparentlocationtx:
+                            type: string
+                          trispaceclassificationtx:
+                            type: string
+                          type:
+                            type: string
+                mappings:
+                  - variable:
+                      mappings:
+                        - mxlocation:
+                            mappings:
+                              - description:
+                                  template: '{{$Foreachitem.Description}}'
+                              - location:
+                                  template: '{{$Foreachitem.ID}}'
+                              - orgid:
+                                  template: '{{$Setvariable3.variable.maximoorgid}}'
+                              - siteid:
+                                  template: '{{$Setvariable3.variable.maximositeid}}'
+                              - status:
+                                  template: '{{$uppercase($Foreachitem.Status)}}'
+                              - triparentlocationtx:
+                                  template: '{{$Foreachitem."Parent Floor"}}'
+                              - trispaceclassificationtx:
+                                  template: '{{$Foreachitem."Current Use Space Class"}}'
+                              - type:
+                                  template: '{{$Setvariable3.variable.locationtype}}'
+          - custom-action:
+              name: testClient POST testclient
+              target:
+                $ref: '#/integration/action-interfaces/action-interface-1'
+              action: testclient
+              map:
+                customSchemas:
+                  properties.`body`:
+                    type: object
+                    properties:
+                      fromTririga:
+                        type: object
+                        properties: {}
+                      toMaximo:
+                        type: object
+                        properties: {}
+                mappings:
+                  - body:
+                      mappings:
+                        - fromTririga:
+                            expression: '$Foreachitem '
+                        - toMaximo:
+                            expression: '$Setvariable.variable.mxlocation '
+                $map: http://ibm.com/appconnect/map/v1
+                input:
+                  - variable: Foreachitem
+                    $ref: '#/block/For each/current-item'
+                  - variable: Request
+                    $ref: '#/trigger/payload'
+                  - variable: Setvariable
+                    $ref: '#/block/For each/node-output/Set variable/response/payload'
+                  - variable: JSONParserParse
+                    $ref: '#/node-output/JSON Parser Parse/response/payload'
+          - custom-action:
+              name: HTTP Invoke method
+              target:
+                $ref: '#/integration/action-interfaces/action-interface-4'
+              action: INVOKE
+              map:
+                customSchemas:
+                  properties.`requestHeaders`:
+                    type: object
+                    properties:
+                      Content-Type:
+                        type: string
+                      x-method-override:
+                        type: string
+                mappings:
+                  - continue2xx:
+                      expression: 'false'
+                  - method:
+                      template: POST
+                  - requestBody:
+                      template: '{{$Setvariable.variable.mxlocation}}'
+                  - requestHeaders:
+                      mappings:
+                        - Content-Type:
+                            template: application/json
+                        - x-method-override:
+                            template: SYNC
+                  - url:
+                      template: >-
+                        http://oxytocin1.fyre.ibm.com:9080/meaweb/esqueue/PLUSTTRIRIGA/PLUSTMXOPERLOCEnService
+                $map: http://ibm.com/appconnect/map/v1
+                input:
+                  - variable: Foreachitem
+                    $ref: '#/block/For each/current-item'
+                  - variable: Request
+                    $ref: '#/trigger/payload'
+                  - variable: Setvariable
+                    $ref: '#/block/For each/node-output/Set variable/response/payload'
+                  - variable: testClientPOSTtestclient
+                    $ref: >-
+                      #/block/For each/node-output/testClient POST
+                      testclient/response/payload
+                  - variable: testClientPOSTtestclientMetadata
+                    $ref: >-
+                      #/block/For each/node-output/testClient POST
+                      testclient/response
+                  - variable: Setvariable3
+                    $ref: '#/node-output/Set variable 3/response/payload'
+                  - variable: JSONParserParse
+                    $ref: '#/node-output/JSON Parser Parse/response/payload'
+          - set-variable:
+              name: Set variable 2
+              map:
+                $map: http://ibm.com/appconnect/map/v1
+                input:
+                  - variable: Foreachitem
+                    $ref: '#/block/For each/current-item'
+                  - variable: Request
+                    $ref: '#/trigger/payload'
+                  - variable: Setvariable
+                    $ref: '#/block/For each/node-output/Set variable/response/payload'
+                  - variable: testClientPOSTtestclient
+                    $ref: >-
+                      #/block/For each/node-output/testClient POST
+                      testclient/response/payload
+                  - variable: testClientPOSTtestclientMetadata
+                    $ref: >-
+                      #/block/For each/node-output/testClient POST
+                      testclient/response
+                  - variable: HTTPInvokemethod
+                    $ref: >-
+                      #/block/For each/node-output/HTTP Invoke
+                      method/response/payload
+                  - variable: HTTPInvokemethodMetadata
+                    $ref: '#/block/For each/node-output/HTTP Invoke method/response'
+                  - variable: JSONParserParse
+                    $ref: '#/node-output/JSON Parser Parse/response/payload'
+                customSchemas:
+                  properties.`variable`:
+                    type: object
+                    properties:
+                      locationSent:
+                        type: object
+                        properties:
+                          mxPayload:
+                            type: object
+                            properties: {}
+                          mxResponse:
+                            type: object
+                            properties: {}
+                mappings:
+                  - variable:
+                      mappings:
+                        - locationSent:
+                            mappings:
+                              - mxPayload:
+                                  expression: '$Setvariable.variable.mxlocation '
+                              - mxResponse:
+                                  expression: '$HTTPInvokemethodMetadata '
+  name: PLUSTTRISpace2MX
+models:
+  mxLocation:
+    name: mxLocation
+    properties:
+      dummyid:
+        required: false
+        id: true
+        type: string
+      spaceSent:
+        required: false
+        id: false
+        type:
+          - type: {}
+    plural: mxLocation
+    description: Location model of maximo
+    operations:
+      synclocation: '#/integration/assemblies/assembly-2'
+    methods:
+      synclocation:
+        name: synclocation
+        display:
+          name: syncLocation
+        accessType: WRITE
+        accepts:
+          - arg: data
+            type: triSpace
+            http:
+              source: body
+        returns:
+          arg: data
+          type: mxLocation
+          root: true
+        http:
+          verb: POST
+          path: /synclocation
+        description: inserting tririga locations to maximo
+  triSpace:
+    name: triSpace
+    properties:
+      dummyID:
+        required: false
+        id: true
+        type: string
+      data:
+        required: false
+        id: false
+        type:
+          - type: {}
+      continueToken:
+        required: false
+        id: false
+        type: string
+      header:
+        required: false
+        id: false
+        type:
+          - string
+      totalRows:
+        required: false
+        id: false
+        type: string
+    plural: triSpace
+    description: ' '
+    operations: {}

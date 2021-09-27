@@ -1,0 +1,458 @@
+$integration: http://ibm.com/appconnect/integration/v2/integrationFile
+integration:
+  type: api
+  trigger-interfaces:
+    trigger-interface-1:
+      triggers:
+        syncassetMxAsset:
+          assembly:
+            $ref: '#/integration/assemblies/assembly-1'
+          input-context:
+            data: triAsset
+          output-context:
+            data: mxAsset
+      options:
+        resources:
+          - business-object: mxAsset
+            model:
+              $ref: '#/models/mxAsset'
+            triggers:
+              syncasset: syncassetMxAsset
+          - business-object: triAsset
+            model:
+              $ref: '#/models/triAsset'
+            triggers: {}
+      type: api-trigger
+  action-interfaces:
+    action-interface-1:
+      type: api-action
+      business-object: request
+      connector-type: http
+      account-name: mxtririgaoxytocin
+      actions:
+        INVOKE: {}
+    action-interface-2:
+      type: api-action
+      business-object: testclient_model
+      connector-type: UDA.default.openapi.testClient
+      account-name: Account 1
+      actions:
+        testclient: {}
+  assemblies:
+    assembly-1:
+      assembly:
+        execute:
+          - parse:
+              name: JSON Parser Parse
+              parse-format: json
+              source:
+                template: '{{$Request}}'
+                input:
+                  - variable: Request
+                    $ref: '#/trigger/payload'
+              sample-data: |-
+                {
+                   "data":[
+                      {
+                         "Condition":"Good",
+                         "Description":"Silent Pump",
+                         "Organization":"\\Organizations\\Walmart",
+                         "boId":10008338,
+                         "Maintenance Priority":"High",
+                         "Name":"Dryer Pump2",
+                         "Serial Number":"10008923",
+                         "recordId":135501969,
+                         "Specification  Name":"Maximo-Spec",
+                         "Primary Location":"\\Locations\\Property 08\\Bldg 07\\Floor 15\\Space 01",
+                         "Reservable":"FALSE",
+                         "ID":"001",
+                         "Bar Code Entry":"as-4567"
+                      }
+                   ],
+                   "continueToken":"",
+                   "header":[
+                      "ID",
+                      "Name",
+                      "Description",
+                      "Bar Code Entry",
+                      "Reservable",
+                      "Serial Number",
+                      "Condition",
+                      "Maintenance Priority",
+                      "Primary Location",
+                      "Organization",
+                      "Specification  Name"
+                   ],
+                   "totalRows":1
+                }
+              output-schema:
+                $schema: http://json-schema.org/draft-04/schema#
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        Condition:
+                          type: string
+                        Description:
+                          type: string
+                        Organization:
+                          type: string
+                        boId:
+                          type: number
+                        Maintenance Priority:
+                          type: string
+                        Name:
+                          type: string
+                        Serial Number:
+                          type: string
+                        recordId:
+                          type: number
+                        Specification  Name:
+                          type: string
+                        Primary Location:
+                          type: string
+                        Reservable:
+                          type: string
+                        ID:
+                          type: string
+                        Bar Code Entry:
+                          type: string
+                  continueToken:
+                    type: string
+                  header:
+                    type: array
+                    items:
+                      type: string
+                  totalRows:
+                    type: number
+                title: Parsed JSON
+          - for-each:
+              name: For each
+              assembly:
+                $ref: '#/integration/assemblies/assembly-2'
+              source:
+                expression: '$JSONParserParse.data '
+                input:
+                  - variable: Request
+                    $ref: '#/trigger/payload'
+                  - variable: JSONParserParse
+                    $ref: '#/node-output/JSON Parser Parse/response/payload'
+              mode: parallel
+              continue-on-error: false
+              map:
+                $map: http://ibm.com/appconnect/map/v1
+                input:
+                  - variable: Foreachitem
+                    $ref: '#/block/For each/current-item'
+                  - variable: Request
+                    $ref: '#/trigger/payload'
+                  - variable: Setvariable
+                    $ref: '#/block/For each/node-output/Set variable/response/payload'
+                  - variable: testClientPOSTtestclient
+                    $ref: >-
+                      #/block/For each/node-output/testClient POST
+                      testclient/response/payload
+                  - variable: testClientPOSTtestclientMetadata
+                    $ref: >-
+                      #/block/For each/node-output/testClient POST
+                      testclient/response
+                  - variable: HTTPInvokemethod
+                    $ref: >-
+                      #/block/For each/node-output/HTTP Invoke
+                      method/response/payload
+                  - variable: HTTPInvokemethodMetadata
+                    $ref: '#/block/For each/node-output/HTTP Invoke method/response'
+                  - variable: Setvariable2
+                    $ref: >-
+                      #/block/For each/node-output/Set variable
+                      2/response/payload
+                  - variable: JSONParserParse
+                    $ref: '#/node-output/JSON Parser Parse/response/payload'
+                customSchemas:
+                  properties.`output`:
+                    type: object
+                    properties:
+                      assetSent:
+                        type: array
+                        items:
+                          type: object
+                          properties: {}
+                mappings:
+                  - output:
+                      mappings:
+                        - assetSent:
+                            expression: $append([],$Setvariable2.variable.assetSent )
+              display-name: Tririga ASSET
+          - response:
+              name: response-1
+              reply-maps:
+                - title: mxAsset successfully add custom operation
+                  status-code: '200'
+                  map:
+                    $map: http://ibm.com/appconnect/map/v1
+                    input:
+                      - variable: Request
+                        $ref: '#/trigger/payload'
+                      - variable: JSONParserParse
+                        $ref: '#/node-output/JSON Parser Parse/response/payload'
+                      - variable: Foreach
+                        $ref: '#/node-output/For each/response/payload'
+                    mappings:
+                      - assetsSent:
+                          expression: '$Foreach.output.assetSent '
+                  input:
+                    - variable: Request
+                      $ref: '#/trigger/payload'
+                    - variable: JSONParserParse
+                      $ref: '#/node-output/JSON Parser Parse/response/payload'
+                    - variable: Foreach
+                      $ref: '#/node-output/For each/response/payload'
+    assembly-2:
+      assembly:
+        execute:
+          - set-variable:
+              name: Set variable
+              map:
+                $map: http://ibm.com/appconnect/map/v1
+                input:
+                  - variable: Foreachitem
+                    $ref: '#/block/For each/current-item'
+                  - variable: Request
+                    $ref: '#/trigger/payload'
+                  - variable: JSONParserParse
+                    $ref: '#/node-output/JSON Parser Parse/response/payload'
+                customSchemas:
+                  properties.`variable`:
+                    type: object
+                    properties:
+                      mxAsset:
+                        type: object
+                        properties:
+                          orgid:
+                            type: string
+                          description:
+                            type: string
+                          priority:
+                            type: string
+                          serialnum:
+                            type: string
+                          specification:
+                            type: string
+                          assetnum:
+                            type: string
+                          siteid:
+                            type: string
+                mappings:
+                  - variable:
+                      mappings:
+                        - mxAsset:
+                            mappings:
+                              - assetnum:
+                                  template: '{{$Foreachitem.ID}}'
+                              - description:
+                                  template: '{{$Foreachitem.Description}}'
+                              - orgid:
+                                  template: TRIRIGA
+                              - priority:
+                                  template: '{{$Foreachitem."Maintenance Priority"}}'
+                              - serialnum:
+                                  template: '{{$Foreachitem."Serial Number"}}'
+                              - siteid:
+                                  template: TRIMAIN
+                              - specification:
+                                  template: Maximo-Spec
+          - custom-action:
+              name: testClient POST testclient
+              target:
+                $ref: '#/integration/action-interfaces/action-interface-2'
+              action: testclient
+              map:
+                customSchemas:
+                  properties.`body`:
+                    type: object
+                    properties:
+                      dataSent:
+                        type: object
+                        properties: {}
+                mappings:
+                  - body:
+                      mappings:
+                        - dataSent:
+                            expression: '$Setvariable '
+                $map: http://ibm.com/appconnect/map/v1
+                input:
+                  - variable: Foreachitem
+                    $ref: '#/block/For each/current-item'
+                  - variable: Request
+                    $ref: '#/trigger/payload'
+                  - variable: Setvariable
+                    $ref: '#/block/For each/node-output/Set variable/response/payload'
+                  - variable: Setvariable3
+                    $ref: '#/node-output/Set variable 3/response/payload'
+                  - variable: JSONParserParse
+                    $ref: '#/node-output/JSON Parser Parse/response/payload'
+          - custom-action:
+              name: HTTP Invoke method
+              target:
+                $ref: '#/integration/action-interfaces/action-interface-1'
+              action: INVOKE
+              map:
+                customSchemas:
+                  properties.`requestHeaders`:
+                    type: object
+                    properties:
+                      Content-Type:
+                        type: string
+                      x-method-override:
+                        type: string
+                mappings:
+                  - continue2xx:
+                      expression: 'false'
+                  - method:
+                      template: POST
+                  - requestBody:
+                      template: '{{$Setvariable.variable.mxAsset}}'
+                  - requestHeaders:
+                      mappings:
+                        - Content-Type:
+                            template: application/json
+                        - x-method-override:
+                            template: SYNC
+                  - url:
+                      template: >-
+                        http://oxytocin1.fyre.ibm.com:9080/meaweb/esqueue/PLUSTTRIRIGA/PLUSTMXASSETEnService
+                $map: http://ibm.com/appconnect/map/v1
+                input:
+                  - variable: Foreachitem
+                    $ref: '#/block/For each/current-item'
+                  - variable: Request
+                    $ref: '#/trigger/payload'
+                  - variable: Setvariable
+                    $ref: '#/block/For each/node-output/Set variable/response/payload'
+                  - variable: testClientPOSTtestclient
+                    $ref: >-
+                      #/block/For each/node-output/testClient POST
+                      testclient/response/payload
+                  - variable: testClientPOSTtestclientMetadata
+                    $ref: >-
+                      #/block/For each/node-output/testClient POST
+                      testclient/response
+                  - variable: JSONParserParse
+                    $ref: '#/node-output/JSON Parser Parse/response/payload'
+          - set-variable:
+              name: Set variable 2
+              map:
+                $map: http://ibm.com/appconnect/map/v1
+                input:
+                  - variable: Foreachitem
+                    $ref: '#/block/For each/current-item'
+                  - variable: Request
+                    $ref: '#/trigger/payload'
+                  - variable: Setvariable
+                    $ref: '#/block/For each/node-output/Set variable/response/payload'
+                  - variable: testClientPOSTtestclient
+                    $ref: >-
+                      #/block/For each/node-output/testClient POST
+                      testclient/response/payload
+                  - variable: testClientPOSTtestclientMetadata
+                    $ref: >-
+                      #/block/For each/node-output/testClient POST
+                      testclient/response
+                  - variable: HTTPInvokemethod
+                    $ref: >-
+                      #/block/For each/node-output/HTTP Invoke
+                      method/response/payload
+                  - variable: HTTPInvokemethodMetadata
+                    $ref: '#/block/For each/node-output/HTTP Invoke method/response'
+                  - variable: JSONParserParse
+                    $ref: '#/node-output/JSON Parser Parse/response/payload'
+                customSchemas:
+                  properties.`variable`:
+                    type: object
+                    properties:
+                      assetSent:
+                        type: object
+                        properties:
+                          mxPayload:
+                            type: object
+                            properties: {}
+                          mxResponse:
+                            type: object
+                            properties: {}
+                mappings:
+                  - variable:
+                      mappings:
+                        - assetSent:
+                            mappings:
+                              - mxPayload:
+                                  expression: '$Setvariable.variable.mxAsset '
+                              - mxResponse:
+                                  expression: '$HTTPInvokemethodMetadata '
+  name: PLUSTTRIAsset2MX
+models:
+  mxAsset:
+    name: mxAsset
+    properties:
+      dummyID:
+        required: false
+        id: true
+        type: string
+      assetsSent:
+        required: false
+        id: false
+        type:
+          - type: {}
+    plural: mxAsset
+    description: ' '
+    operations:
+      syncasset: '#/integration/assemblies/assembly-1'
+    methods:
+      syncasset:
+        name: syncasset
+        display:
+          name: syncAsset
+        accessType: WRITE
+        accepts:
+          - arg: data
+            type: triAsset
+            http:
+              source: body
+        returns:
+          arg: data
+          type: mxAsset
+          root: true
+        http:
+          verb: POST
+          path: /syncasset
+        description: Send ASSET record from Tririga to Maximo.
+  triAsset:
+    name: triAsset
+    properties:
+      dummyID:
+        required: false
+        id: true
+        type: string
+      data:
+        required: false
+        id: false
+        type:
+          - type: {}
+      continueToken:
+        required: false
+        id: false
+        type: string
+      header:
+        required: false
+        id: false
+        type:
+          - string
+      totalRows:
+        required: false
+        id: false
+        type: number
+    plural: triAsset
+    description: ' '
+    operations: {}

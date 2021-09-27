@@ -1,0 +1,517 @@
+$integration: http://ibm.com/appconnect/integration/v2/integrationFile
+integration:
+  type: api
+  trigger-interfaces:
+    trigger-interface-1:
+      triggers:
+        syncpersonMxPerson:
+          assembly:
+            $ref: '#/integration/assemblies/assembly-1'
+          input-context:
+            data: triPerson
+          output-context:
+            data: mxPerson
+      options:
+        resources:
+          - business-object: mxPerson
+            model:
+              $ref: '#/models/mxPerson'
+            triggers:
+              syncperson: syncpersonMxPerson
+          - business-object: triPerson
+            model:
+              $ref: '#/models/triPerson'
+            triggers: {}
+      type: api-trigger
+  action-interfaces:
+    action-interface-1:
+      type: api-action
+      business-object: testclient_model
+      connector-type: UDA.default.openapi.testClient
+      account-name: Account 1
+      actions:
+        testclient: {}
+    action-interface-2:
+      type: api-action
+      business-object: request
+      connector-type: http
+      account-name: mxtririgaoxytocin
+      actions:
+        INVOKE: {}
+  assemblies:
+    assembly-1:
+      assembly:
+        execute:
+          - parse:
+              name: JSON Parser Parse
+              parse-format: json
+              source:
+                template: '{{$Request}}'
+                input:
+                  - variable: Request
+                    $ref: '#/trigger/payload'
+              sample-data: |
+                {
+                  "data": [
+                    {
+                      "Form Name": "triEmployee",
+                      "Active End Date": "2021-03-31T00:00:00-08:00",
+                      "Organization Name": "IBM",
+                      "Address": "19 Main St",
+                      "boId": 106402,
+                      "First Name": "John",
+                      "Location Name": "",
+                      "Work Phone": "12345",
+                      "City": "Geography",
+                      "State/Province": "Nevada",
+                      "eMail": "abc@sample.com",
+                      "recordId": 135499665,
+                      "Zip/Postal Code": "78231",
+                      "Active Start Date": "1986-04-20T00:00:00-08:00",
+                      "Country": "USA",
+                      "Last Name": "Smith"
+                    }
+                  ],
+                  "continueToken": "",
+                  "header": [
+                    "Active End Date",
+                    "Active Start Date",
+                    "Address",
+                    "City",
+                    "Country",
+                    "eMail",
+                    "First Name",
+                    "Form Name",
+                    "Last Name",
+                    "State/Province",
+                    "Work Phone",
+                    "Zip/Postal Code",
+                    "Organization Name",
+                    "Location Name"
+                  ],
+                  "totalRows": 1
+                }
+              output-schema:
+                $schema: http://json-schema.org/draft-04/schema#
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        Form Name:
+                          type: string
+                        Active End Date:
+                          type: string
+                        Organization Name:
+                          type: string
+                        Address:
+                          type: string
+                        boId:
+                          type: number
+                        First Name:
+                          type: string
+                        Location Name:
+                          type: string
+                        Work Phone:
+                          type: string
+                        City:
+                          type: string
+                        State/Province:
+                          type: string
+                        eMail:
+                          type: string
+                        recordId:
+                          type: number
+                        Zip/Postal Code:
+                          type: string
+                        Active Start Date:
+                          type: string
+                        Country:
+                          type: string
+                        Last Name:
+                          type: string
+                  continueToken:
+                    type: string
+                  header:
+                    type: array
+                    items:
+                      type: string
+                  totalRows:
+                    type: number
+                title: Parsed JSON
+          - for-each:
+              name: For each
+              assembly:
+                $ref: '#/integration/assemblies/assembly-2'
+              source:
+                expression: '$JSONParserParse.data '
+                input:
+                  - variable: Request
+                    $ref: '#/trigger/payload'
+                  - variable: JSONParserParse
+                    $ref: '#/node-output/JSON Parser Parse/response/payload'
+              mode: parallel
+              continue-on-error: false
+              map:
+                $map: http://ibm.com/appconnect/map/v1
+                input:
+                  - variable: Foreachitem
+                    $ref: '#/block/For each/current-item'
+                  - variable: Request
+                    $ref: '#/trigger/payload'
+                  - variable: Setvariable
+                    $ref: '#/block/For each/node-output/Set variable/response/payload'
+                  - variable: testClientPOSTtestclient
+                    $ref: >-
+                      #/block/For each/node-output/testClient POST
+                      testclient/response/payload
+                  - variable: testClientPOSTtestclientMetadata
+                    $ref: >-
+                      #/block/For each/node-output/testClient POST
+                      testclient/response
+                  - variable: HTTPInvokemethod
+                    $ref: >-
+                      #/block/For each/node-output/HTTP Invoke
+                      method/response/payload
+                  - variable: HTTPInvokemethodMetadata
+                    $ref: '#/block/For each/node-output/HTTP Invoke method/response'
+                  - variable: Setvariable2
+                    $ref: >-
+                      #/block/For each/node-output/Set variable
+                      2/response/payload
+                  - variable: JSONParserParse
+                    $ref: '#/node-output/JSON Parser Parse/response/payload'
+                customSchemas:
+                  properties.`output`:
+                    type: object
+                    properties:
+                      peopleSent:
+                        type: array
+                        items:
+                          type: object
+                          properties: {}
+                mappings:
+                  - output:
+                      mappings:
+                        - peopleSent:
+                            expression: $append([],$Setvariable2.variable.personSent)
+              display-name: Tririga PERSON
+          - response:
+              name: response-1
+              reply-maps:
+                - title: mxPerson successfully add custom operation
+                  status-code: '200'
+                  map:
+                    $map: http://ibm.com/appconnect/map/v1
+                    input:
+                      - variable: Request
+                        $ref: '#/trigger/payload'
+                      - variable: JSONParserParse
+                        $ref: '#/node-output/JSON Parser Parse/response/payload'
+                      - variable: Foreach
+                        $ref: '#/node-output/For each/response/payload'
+                    mappings:
+                      - peopleSent:
+                          expression: '$Foreach.output.peopleSent '
+                  input:
+                    - variable: Request
+                      $ref: '#/trigger/payload'
+                    - variable: JSONParserParse
+                      $ref: '#/node-output/JSON Parser Parse/response/payload'
+                    - variable: Foreach
+                      $ref: '#/node-output/For each/response/payload'
+    assembly-2:
+      assembly:
+        execute:
+          - set-variable:
+              name: Set variable
+              map:
+                $map: http://ibm.com/appconnect/map/v1
+                input:
+                  - variable: Foreachitem
+                    $ref: '#/block/For each/current-item'
+                  - variable: Request
+                    $ref: '#/trigger/payload'
+                  - variable: JSONParserParse
+                    $ref: '#/node-output/JSON Parser Parse/response/payload'
+                customSchemas:
+                  properties.`variable`:
+                    type: object
+                    properties:
+                      mxPerson:
+                        type: object
+                        properties:
+                          terminationdate:
+                            type: string
+                          locationorg:
+                            type: string
+                          locationsite:
+                            type: string
+                          addressline1:
+                            type: string
+                          firstname:
+                            type: string
+                          lastname:
+                            type: string
+                          phone:
+                            type: array
+                            items:
+                              type: object
+                              properties: {}
+                          city:
+                            type: string
+                          stateprovince:
+                            type: string
+                          email:
+                            type: array
+                            items:
+                              type: object
+                              properties: {}
+                          externalrefid:
+                            type: string
+                          postalcode:
+                            type: string
+                          hiredate:
+                            type: string
+                          country:
+                            type: string
+                          personid:
+                            type: string
+                mappings:
+                  - variable:
+                      mappings:
+                        - mxPerson:
+                            mappings:
+                              - addressline1:
+                                  template: '{{$Foreachitem.Address}}'
+                              - city:
+                                  template: '{{$Foreachitem.City}}'
+                              - country:
+                                  template: '{{$Foreachitem.Country}}'
+                              - email:
+                                  expression: >-
+                                    $Foreachitem.eMail != "" ? $append([],{   
+                                    "isprimary" : true,    "emailaddress" :
+                                    $Foreachitem.eMail})
+                              - externalrefid:
+                                  template: '{{$Foreachitem.recordId}}'
+                              - firstname:
+                                  template: '{{$Foreachitem."First Name"}}'
+                              - hiredate:
+                                  template: '{{$Foreachitem."Active Start Date"}}'
+                              - lastname:
+                                  template: '{{$Foreachitem."Last Name"}}'
+                              - locationorg:
+                                  template: '{{$Foreachitem."Organization Name"}}'
+                              - locationsite:
+                                  template: '{{$Foreachitem."Location Name"}}'
+                              - personid:
+                                  template: '{{$Foreachitem.recordId}}'
+                              - phone:
+                                  expression: >-
+                                    $Foreachitem."Work Phone" != "" ?
+                                    $append([],{    "isprimary" : true,   
+                                    "phonenum" : $Foreachitem."Work Phone"})
+                              - postalcode:
+                                  template: '{{$Foreachitem."Zip/Postal Code"}}'
+                              - stateprovince:
+                                  template: '{{$Foreachitem."State/Province"}}'
+                              - terminationdate:
+                                  template: '{{$Foreachitem."Active End Date"}}'
+          - custom-action:
+              name: testClient POST testclient
+              target:
+                $ref: '#/integration/action-interfaces/action-interface-1'
+              action: testclient
+              map:
+                customSchemas:
+                  properties.`body`:
+                    type: object
+                    properties:
+                      fromTririga:
+                        type: object
+                        properties: {}
+                      toMaximo:
+                        type: object
+                        properties: {}
+                mappings:
+                  - body:
+                      mappings:
+                        - fromTririga:
+                            expression: '$Foreachitem '
+                        - toMaximo:
+                            expression: $Setvariable.variable.mxPerson
+                $map: http://ibm.com/appconnect/map/v1
+                input:
+                  - variable: Foreachitem
+                    $ref: '#/block/For each/current-item'
+                  - variable: Request
+                    $ref: '#/trigger/payload'
+                  - variable: Setvariable
+                    $ref: '#/block/For each/node-output/Set variable/response/payload'
+                  - variable: JSONParserParse
+                    $ref: '#/node-output/JSON Parser Parse/response/payload'
+          - custom-action:
+              name: HTTP Invoke method
+              target:
+                $ref: '#/integration/action-interfaces/action-interface-2'
+              action: INVOKE
+              map:
+                customSchemas:
+                  properties.`requestHeaders`:
+                    type: object
+                    properties:
+                      Content-Type:
+                        type: string
+                      x-method-override:
+                        type: string
+                mappings:
+                  - continue2xx:
+                      expression: 'false'
+                  - method:
+                      template: POST
+                  - requestBody:
+                      template: '{{$Setvariable.variable.mxPerson}}'
+                  - requestHeaders:
+                      mappings:
+                        - Content-Type:
+                            template: application/json
+                        - x-method-override:
+                            template: SYNC
+                  - url:
+                      template: >-
+                        http://oxytocin1.fyre.ibm.com:9080/meaweb/esqueue/PLUSTTRIRIGA/PLUSTMXPERSONEnService
+                $map: http://ibm.com/appconnect/map/v1
+                input:
+                  - variable: Foreachitem
+                    $ref: '#/block/For each/current-item'
+                  - variable: Request
+                    $ref: '#/trigger/payload'
+                  - variable: Setvariable
+                    $ref: '#/block/For each/node-output/Set variable/response/payload'
+                  - variable: testClientPOSTtestclient
+                    $ref: >-
+                      #/block/For each/node-output/testClient POST
+                      testclient/response/payload
+                  - variable: testClientPOSTtestclientMetadata
+                    $ref: >-
+                      #/block/For each/node-output/testClient POST
+                      testclient/response
+                  - variable: JSONParserParse
+                    $ref: '#/node-output/JSON Parser Parse/response/payload'
+          - set-variable:
+              name: Set variable 2
+              map:
+                $map: http://ibm.com/appconnect/map/v1
+                input:
+                  - variable: Foreachitem
+                    $ref: '#/block/For each/current-item'
+                  - variable: Request
+                    $ref: '#/trigger/payload'
+                  - variable: Setvariable
+                    $ref: '#/block/For each/node-output/Set variable/response/payload'
+                  - variable: testClientPOSTtestclient
+                    $ref: >-
+                      #/block/For each/node-output/testClient POST
+                      testclient/response/payload
+                  - variable: testClientPOSTtestclientMetadata
+                    $ref: >-
+                      #/block/For each/node-output/testClient POST
+                      testclient/response
+                  - variable: HTTPInvokemethod
+                    $ref: >-
+                      #/block/For each/node-output/HTTP Invoke
+                      method/response/payload
+                  - variable: HTTPInvokemethodMetadata
+                    $ref: '#/block/For each/node-output/HTTP Invoke method/response'
+                  - variable: JSONParserParse
+                    $ref: '#/node-output/JSON Parser Parse/response/payload'
+                customSchemas:
+                  properties.`variable`:
+                    type: object
+                    properties:
+                      personSent:
+                        type: object
+                        properties:
+                          mxPayload:
+                            type: object
+                            properties: {}
+                          mxResponse:
+                            type: object
+                            properties: {}
+                mappings:
+                  - variable:
+                      mappings:
+                        - personSent:
+                            mappings:
+                              - mxPayload:
+                                  expression: '$Setvariable.variable.mxPerson '
+                              - mxResponse:
+                                  expression: '$HTTPInvokemethodMetadata '
+  name: PLUSTTRIPerson2MX
+models:
+  mxPerson:
+    name: mxPerson
+    properties:
+      dummyID:
+        required: false
+        id: true
+        type: string
+      peopleSent:
+        required: false
+        id: false
+        type:
+          - type: {}
+    plural: mxPerson
+    description: ' '
+    operations:
+      syncperson: '#/integration/assemblies/assembly-1'
+    methods:
+      syncperson:
+        name: syncperson
+        display:
+          name: syncPerson
+        accessType: WRITE
+        accepts:
+          - arg: data
+            type: triPerson
+            http:
+              source: body
+        returns:
+          arg: data
+          type: mxPerson
+          root: true
+        http:
+          verb: POST
+          path: /syncperson
+        description: Send PERSON record from Tririga to Maximo.
+  triPerson:
+    name: triPerson
+    properties:
+      dummyID:
+        required: false
+        id: true
+        type: string
+      data:
+        required: false
+        id: false
+        type:
+          - type: {}
+      continueToken:
+        required: false
+        id: false
+        type: string
+      header:
+        required: false
+        id: false
+        type:
+          - string
+      totalRows:
+        required: false
+        id: false
+        type: string
+    plural: triPerson
+    description: ' '
+    operations: {}

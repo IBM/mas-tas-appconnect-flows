@@ -1,0 +1,633 @@
+$integration: http://ibm.com/appconnect/integration/v2/integrationFile
+integration:
+  type: api
+  trigger-interfaces:
+    trigger-interface-1:
+      triggers:
+        synclocationTriLocation:
+          assembly:
+            $ref: '#/integration/assemblies/assembly-1'
+          input-context:
+            data: mxLocation
+          output-context:
+            data: triLocation
+      options:
+        resources:
+          - business-object: mxLocation
+            model:
+              $ref: '#/models/mxLocation'
+            triggers: {}
+          - business-object: triLocation
+            model:
+              $ref: '#/models/triLocation'
+            triggers:
+              synclocation: synclocationTriLocation
+      type: api-trigger
+  action-interfaces:
+    action-interface-1:
+      type: api-action
+      business-object: testclient_model
+      connector-type: UDA.default.openapi.testClient
+      account-name: Account 1
+      actions:
+        testclient: {}
+    action-interface-2:
+      type: api-action
+      business-object: request
+      connector-type: http
+      account-name: mxtririga
+      actions:
+        INVOKE: {}
+  assemblies:
+    assembly-1:
+      assembly:
+        execute:
+          - set-variable:
+              name: Set variable
+              map:
+                $map: http://ibm.com/appconnect/map/v1
+                input:
+                  - variable: Request
+                    $ref: '#/trigger/payload'
+                customSchemas:
+                  properties.`variable`:
+                    type: object
+                    properties:
+                      member:
+                        type: array
+                        items:
+                          type: object
+                          properties: {}
+                mappings:
+                  - variable:
+                      mappings:
+                        - member:
+                            expression: >-
+                              $count(member) > 0 ? $Request.member  :
+                              $append([],$$)
+          - parse:
+              name: JSON Parser Parse
+              parse-format: json
+              source:
+                template: '{{$Setvariable.variable}}'
+                input:
+                  - variable: Request
+                    $ref: '#/trigger/payload'
+                  - variable: Setvariable
+                    $ref: '#/node-output/Set variable/response/payload'
+              sample-data: |-
+                {
+                  "member":[
+                    {
+                  "_rowstamp": "132962",
+                  "children": false,
+                  "location": "OFF105",
+                  "locations": [
+                    {
+                      "_rowstamp": "132731",
+                      "autowogen": false,
+                      "changeby": "MAXIMO",
+                      "changedate": "1999-12-07T14:34:00-08:00",
+                      "description": "Office #105",
+                      "disabled": false,
+                      "glaccount": "6220-300-???",
+                      "hasld": false,
+                      "isdefault": false,
+                      "isrepairfacility": false,
+                      "langcode": "EN",
+                      "locationsid": 198,
+                      "orgid": "EAGLENA",
+                      "pluscloop": false,
+                      "pluscpmextdate": false,
+                      "replacecost": 0,
+                      "status": "OPERATING",
+                      "status_description": "Operating",
+                      "statusdate": "1999-12-07T14:34:00-08:00",
+                      "type": "OPERATING",
+                      "type_description": "Operating Location",
+                      "useinpopr": false
+                    }
+                  ],
+                  "lochierarchyid": 1,
+                  "locsystem": [
+                    {
+                      "_rowstamp": "133414",
+                      "address": false,
+                      "description": "Primary Hierarchy",
+                      "hasld": false,
+                      "langcode": "EN",
+                      "locsystemid": 4,
+                      "network": false,
+                      "orgid": "EAGLENA",
+                      "primarysystem": true
+                    }
+                  ],
+                  "orgid": "EAGLENA",
+                  "parent": "MOFLOOR1",
+                  "siteid": "BEDFORD",
+                  "systemid": "PRIMARY"
+                }
+                  ]
+                }
+              output-schema:
+                $schema: http://json-schema.org/draft-04/schema#
+                type: object
+                properties:
+                  member:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _rowstamp:
+                          type: string
+                        children:
+                          type: boolean
+                        location:
+                          type: string
+                        locations:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              _rowstamp:
+                                type: string
+                              autowogen:
+                                type: boolean
+                              changeby:
+                                type: string
+                              changedate:
+                                type: string
+                              description:
+                                type: string
+                              disabled:
+                                type: boolean
+                              glaccount:
+                                type: string
+                              hasld:
+                                type: boolean
+                              isdefault:
+                                type: boolean
+                              isrepairfacility:
+                                type: boolean
+                              langcode:
+                                type: string
+                              locationsid:
+                                type: number
+                              orgid:
+                                type: string
+                              pluscloop:
+                                type: boolean
+                              pluscpmextdate:
+                                type: boolean
+                              replacecost:
+                                type: number
+                              status:
+                                type: string
+                              status_description:
+                                type: string
+                              statusdate:
+                                type: string
+                              type:
+                                type: string
+                              type_description:
+                                type: string
+                              useinpopr:
+                                type: boolean
+                        lochierarchyid:
+                          type: number
+                        locsystem:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              _rowstamp:
+                                type: string
+                              address:
+                                type: boolean
+                              description:
+                                type: string
+                              hasld:
+                                type: boolean
+                              langcode:
+                                type: string
+                              locsystemid:
+                                type: number
+                              network:
+                                type: boolean
+                              orgid:
+                                type: string
+                              primarysystem:
+                                type: boolean
+                        orgid:
+                          type: string
+                        parent:
+                          type: string
+                        siteid:
+                          type: string
+                        systemid:
+                          type: string
+                title: Parsed JSON
+          - for-each:
+              name: For each
+              assembly:
+                $ref: '#/integration/assemblies/assembly-2'
+              source:
+                expression: $JSONParserParse.member
+                input:
+                  - variable: Request
+                    $ref: '#/trigger/payload'
+                  - variable: Setvariable
+                    $ref: '#/node-output/Set variable/response/payload'
+                  - variable: JSONParserParse
+                    $ref: '#/node-output/JSON Parser Parse/response/payload'
+              mode: parallel
+              continue-on-error: true
+              map:
+                $map: http://ibm.com/appconnect/map/v1
+                input:
+                  - variable: Foreachitem
+                    $ref: '#/block/For each/current-item'
+                  - variable: Request
+                    $ref: '#/trigger/payload'
+                  - variable: Setvariable2
+                    $ref: >-
+                      #/block/For each/node-output/Set variable
+                      2/response/payload
+                  - variable: Setvariable3
+                    $ref: >-
+                      #/block/For each/node-output/Set variable
+                      3/response/payload
+                  - variable: testClientPOSTtestclient
+                    $ref: >-
+                      #/block/For each/node-output/testClient POST
+                      testclient/response/payload
+                  - variable: testClientPOSTtestclientMetadata
+                    $ref: >-
+                      #/block/For each/node-output/testClient POST
+                      testclient/response
+                  - variable: HTTPInvokemethod
+                    $ref: >-
+                      #/block/For each/node-output/HTTP Invoke
+                      method/response/payload
+                  - variable: HTTPInvokemethodMetadata
+                    $ref: '#/block/For each/node-output/HTTP Invoke method/response'
+                  - variable: Setvariable4
+                    $ref: >-
+                      #/block/For each/node-output/Set variable
+                      4/response/payload
+                  - variable: Setvariable
+                    $ref: '#/node-output/Set variable/response/payload'
+                  - variable: JSONParserParse
+                    $ref: '#/node-output/JSON Parser Parse/response/payload'
+                customSchemas:
+                  properties.`output`:
+                    type: object
+                    properties:
+                      locationsSent:
+                        type: array
+                        items:
+                          type: object
+                          properties: {}
+                mappings:
+                  - output:
+                      mappings:
+                        - locationsSent:
+                            expression: $append([],$Setvariable3.variable.trilocation)
+              display-name: Maximo location
+          - response:
+              name: response-1
+              reply-maps:
+                - title: location successfully add custom operation
+                  status-code: '200'
+                  map:
+                    $map: http://ibm.com/appconnect/map/v1
+                    input:
+                      - variable: Request
+                        $ref: '#/trigger/payload'
+                      - variable: Setvariable
+                        $ref: '#/node-output/Set variable/response/payload'
+                      - variable: JSONParserParse
+                        $ref: '#/node-output/JSON Parser Parse/response/payload'
+                      - variable: Foreach
+                        $ref: '#/node-output/For each/response/payload'
+                    mappings:
+                      - locationsSent:
+                          expression: '$Foreach.output.locationsSent '
+                  input:
+                    - variable: Request
+                      $ref: '#/trigger/payload'
+                    - variable: Setvariable
+                      $ref: '#/node-output/Set variable/response/payload'
+                    - variable: JSONParserParse
+                      $ref: '#/node-output/JSON Parser Parse/response/payload'
+                    - variable: Foreach
+                      $ref: '#/node-output/For each/response/payload'
+    assembly-2:
+      assembly:
+        execute:
+          - set-variable:
+              name: Set variable 2
+              map:
+                $map: http://ibm.com/appconnect/map/v1
+                input:
+                  - variable: Foreachitem
+                    $ref: '#/block/For each/current-item'
+                  - variable: Request
+                    $ref: '#/trigger/payload'
+                  - variable: Setvariable
+                    $ref: '#/node-output/Set variable/response/payload'
+                  - variable: JSONParserParse
+                    $ref: '#/node-output/JSON Parser Parse/response/payload'
+                customSchemas:
+                  properties.`variable`:
+                    type: object
+                    properties:
+                      action:
+                        type: string
+                      triOperationTX:
+                        type: string
+                      triExternalReferenceTX:
+                        type: string
+                      triIdTX:
+                        type: string
+                      triNameTX:
+                        type: string
+                      triDescriptionTX:
+                        type: string
+                      triBarCodeEntryTX:
+                        type: string
+                      triMainPhoneTX:
+                        type: string
+                      triMainFaxTX:
+                        type: string
+                      triPrimMailStopTX:
+                        type: number
+                      triHazMatBL:
+                        type: string
+                      SysReserveFlag:
+                        type: string
+                      triEmergencyExitBL:
+                        type: string
+                      triAreaNU:
+                        type: string
+                      triSpaceClassificationTX:
+                        type: string
+                      triCapacityNU:
+                        type: number
+                      triCapacityFactorNU:
+                        type: string
+                      triEmergencyCapacityNU:
+                        type: string
+                      triOverflowCapcityNU:
+                        type: string
+                      triParentLocationTX:
+                        type: string
+                mappings:
+                  - variable:
+                      mappings:
+                        - action:
+                            template: Create Draft
+                        - triDescriptionTX:
+                            template: '{{$Foreachitem.description}}'
+                        - triExternalReferenceTX:
+                            template: '{{$Foreachitem.customUniqueId}}'
+                        - triIdTX:
+                            template: '{{$Foreachitem.location}}'
+                        - triNameTX:
+                            template: '{{$Foreachitem.location}}'
+                        - triOperationTX:
+                            template: Create/Update
+                        - triParentLocationTX:
+                            template: >-
+                              \Locations\Maximo Property\Maximo Building\Maximo
+                              Floor
+                        - triSpaceClassificationTX:
+                            template: \Classifications\Space Class Current
+          - set-variable:
+              name: Set variable 3
+              map:
+                $map: http://ibm.com/appconnect/map/v1
+                input:
+                  - variable: Foreachitem
+                    $ref: '#/block/For each/current-item'
+                  - variable: Request
+                    $ref: '#/trigger/payload'
+                  - variable: Setvariable2
+                    $ref: >-
+                      #/block/For each/node-output/Set variable
+                      2/response/payload
+                  - variable: Setvariable
+                    $ref: '#/node-output/Set variable/response/payload'
+                  - variable: JSONParserParse
+                    $ref: '#/node-output/JSON Parser Parse/response/payload'
+                customSchemas:
+                  properties.`variable`:
+                    type: object
+                    properties:
+                      trilocation:
+                        type: object
+                        properties: {}
+                mappings:
+                  - variable:
+                      mappings:
+                        - trilocation:
+                            expression: >-
+                              (    $ns:= "spi:";    $applyNS := function($prop)
+                              {        $type($prop) = "object" ?          
+                              $count($keys($prop)) > 0 ?           $applyNSObj
+                              := $each($prop, function($v, $k) {               
+                              $type($v) = "object"  or $type($v) = "array" ?
+                              {$ns & $k: $applyNS($v)} :                 {$ns &
+                              $k : $v}                }) ~> $merge() : {}    
+                              :        $type($prop) = "array" ?           
+                              $count($prop) > 0 ?            $applyNSArr :=
+                              $map($prop, function($v){                $type($v)
+                              = "object"  or $type($v) = "array" ? $applyNS($v)
+                              : $v            })[] : []    };   
+                              $sift($applyNS($Setvariable2.variable),function($v){$boolean($v)});)
+          - custom-action:
+              name: testClient POST testclient
+              target:
+                $ref: '#/integration/action-interfaces/action-interface-1'
+              action: testclient
+              map:
+                mappings:
+                  - body:
+                      expression: '$Setvariable3.variable.trilocation '
+                $map: http://ibm.com/appconnect/map/v1
+                input:
+                  - variable: Foreachitem
+                    $ref: '#/block/For each/current-item'
+                  - variable: Request
+                    $ref: '#/trigger/payload'
+                  - variable: Setvariable2
+                    $ref: >-
+                      #/block/For each/node-output/Set variable
+                      2/response/payload
+                  - variable: Setvariable3
+                    $ref: >-
+                      #/block/For each/node-output/Set variable
+                      3/response/payload
+                  - variable: Setvariable
+                    $ref: '#/node-output/Set variable/response/payload'
+                  - variable: JSONParserParse
+                    $ref: '#/node-output/JSON Parser Parse/response/payload'
+          - custom-action:
+              name: HTTP Invoke method
+              target:
+                $ref: '#/integration/action-interfaces/action-interface-2'
+              action: INVOKE
+              map:
+                customSchemas:
+                  properties.`requestHeaders`:
+                    type: object
+                    properties:
+                      Content-Type:
+                        type: string
+                      Properties:
+                        type: string
+                mappings:
+                  - continue2xx:
+                      expression: 'false'
+                  - method:
+                      template: POST
+                  - requestBody:
+                      template: '{{$Setvariable3.variable.trilocation}}'
+                  - requestHeaders:
+                      mappings:
+                        - Content-Type:
+                            template: application/json
+                        - Properties:
+                            template: spi:triUserMessageTX
+                  - url:
+                      template: http://9.30.43.110:8001/oslc/so/triAPICSpaceCF
+                $map: http://ibm.com/appconnect/map/v1
+                input:
+                  - variable: Foreachitem
+                    $ref: '#/block/For each/current-item'
+                  - variable: Request
+                    $ref: '#/trigger/payload'
+                  - variable: Setvariable2
+                    $ref: >-
+                      #/block/For each/node-output/Set variable
+                      2/response/payload
+                  - variable: Setvariable3
+                    $ref: >-
+                      #/block/For each/node-output/Set variable
+                      3/response/payload
+                  - variable: testClientPOSTtestclient
+                    $ref: >-
+                      #/block/For each/node-output/testClient POST
+                      testclient/response/payload
+                  - variable: testClientPOSTtestclientMetadata
+                    $ref: >-
+                      #/block/For each/node-output/testClient POST
+                      testclient/response
+                  - variable: Setvariable
+                    $ref: '#/node-output/Set variable/response/payload'
+                  - variable: JSONParserParse
+                    $ref: '#/node-output/JSON Parser Parse/response/payload'
+          - set-variable:
+              name: Set variable 4
+              map:
+                $map: http://ibm.com/appconnect/map/v1
+                input:
+                  - variable: Foreachitem
+                    $ref: '#/block/For each/current-item'
+                  - variable: Request
+                    $ref: '#/trigger/payload'
+                  - variable: Setvariable2
+                    $ref: >-
+                      #/block/For each/node-output/Set variable
+                      2/response/payload
+                  - variable: Setvariable3
+                    $ref: >-
+                      #/block/For each/node-output/Set variable
+                      3/response/payload
+                  - variable: testClientPOSTtestclient
+                    $ref: >-
+                      #/block/For each/node-output/testClient POST
+                      testclient/response/payload
+                  - variable: testClientPOSTtestclientMetadata
+                    $ref: >-
+                      #/block/For each/node-output/testClient POST
+                      testclient/response
+                  - variable: HTTPInvokemethod
+                    $ref: >-
+                      #/block/For each/node-output/HTTP Invoke
+                      method/response/payload
+                  - variable: HTTPInvokemethodMetadata
+                    $ref: '#/block/For each/node-output/HTTP Invoke method/response'
+                  - variable: Setvariable
+                    $ref: '#/node-output/Set variable/response/payload'
+                  - variable: JSONParserParse
+                    $ref: '#/node-output/JSON Parser Parse/response/payload'
+                customSchemas:
+                  properties.`variable`:
+                    type: object
+                    properties:
+                      tripayload:
+                        type: object
+                        properties: {}
+                      triresponse:
+                        type: object
+                        properties: {}
+                mappings:
+                  - variable:
+                      mappings:
+                        - tripayload:
+                            expression: '$Setvariable3.variable.trilocation '
+                        - triresponse:
+                            expression: '$HTTPInvokemethodMetadata '
+  name: PLUSTMXLocation2TRI
+models:
+  mxLocation:
+    name: mxLocation
+    properties:
+      dummyID:
+        required: false
+        id: true
+        type: string
+      member:
+        required: false
+        id: false
+        type:
+          - type: {}
+    plural: mxLocation
+    description: ' '
+    operations: {}
+  triLocation:
+    name: triLocation
+    properties:
+      dummyID:
+        required: false
+        id: true
+        type: string
+      locationsSent:
+        required: false
+        id: false
+        type:
+          - type: {}
+    plural: triLocation
+    description: ' '
+    operations:
+      synclocation: '#/integration/assemblies/assembly-1'
+    methods:
+      synclocation:
+        name: synclocation
+        display:
+          name: syncLocation
+        accessType: WRITE
+        accepts:
+          - arg: data
+            type: mxLocation
+            http:
+              source: body
+        returns:
+          arg: data
+          type: triLocation
+          root: true
+        http:
+          verb: POST
+          path: /synclocation
+        description: Send LOCATION record from MAXIMO to Tririga.
