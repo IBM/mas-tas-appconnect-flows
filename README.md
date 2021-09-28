@@ -22,7 +22,7 @@ See the below table for credentials:
 Flow | Username | Password | API key | API location | API key name
 ---|---|---|---|---|---
 Max -> Tri | apiuser | 1Password* | N/A | N/A | N/A
-Tri -> Max | N/A | N/A | 3m5kec05bqjl30lrmc6ea9k819cdffls2o53cqr0 | header | apikey 
+Tri -> Max | N/A | N/A | [apikey] | header | apikey 
 
 Once you have connected the account, head back to the Catalog page and rename the account accordingly (mxtririga or trimaximo). These are the only two connectors needed for the flows, so once you have them configured you can go to the Dashboard and import the flows. The flow should populate with the appropriate account.
 
