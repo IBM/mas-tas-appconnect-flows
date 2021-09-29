@@ -44,3 +44,12 @@ Business Object | Integration Type | Supported Integrations
 People | Inbound & Outbound | Create and Retire
 Building Equipment | Inbound & Outbound | Create and Retire
 Space | Inbound & Outbound | Create and Retire
+
+
+### Step 5 - Choosing a Flow
+
+Asset | Maximo | Tririga
+---|---|---
+Person | [MX2TRI](/docs/MAX2Tririga/PLUSTMXPerson2TRI.yaml) | [TRI2MX](/docs/TRI2Maximo/PLUSTTRIPerson2MX.yaml)
+Asset | [MX2TRI](/docs/MAX2Tririga/PLUSTMXAsset2TRI.yaml) | [TRI2MX](/docs/TRI2Maximo/PLUSTTRIAsset2MX.yaml)
+Location | [MX2TRI](/docs/MAX2Tririga/PLUSTMXLocation2TRI.yaml) | [TRI2MX](/docs/TRI2Maximo/PLUSTTRISpace2MX.yaml)
