@@ -8,7 +8,7 @@ You should have credentials and access to an instance of Maximo.
 
 Within Maximo, make sure to configure these pre-requisites before you begin.
 
-1. Create Workday Organization - TRIRIGA
+1. Create Organization - TRIRIGA
 2. Create a dummy clearing account in Chart of Accounts
 3. Uncheck validation options in Chart of Accounts
 4. Create a new GL Account for TRIRIGA - (1001, Description: Testing)
