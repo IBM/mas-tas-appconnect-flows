@@ -6,7 +6,7 @@
 
 ## Pre-requisites
 
-### Maximo
+ <details><summary><b>MAXIMO</b></summary>
 
 You should have credentials and access to an instance of Maximo.
 
@@ -18,7 +18,9 @@ Within Maximo, make sure to configure these pre-requisites before you begin.
 4. Create a new GL Account for TRIRIGA - (1001, Description: Testing)
 5. Create a site TRIMAIN and set it to active
 
-### TRIRIGA
+  </details>
+  
+ <details><summary><b>TRIRIGA</b></summary>
 
 You should have credentials and access to an instance of TRIRIGA
 
@@ -29,8 +31,10 @@ Business Object | Integration Type | Supported Integrations
 People | Inbound & Outbound | Create and Retire
 Building Equipment | Inbound & Outbound | Create and Retire
 Space | Inbound & Outbound | Create and Retire
+  
+  </details>
 
-### App Connect
+ <details><summary><b>App Connect</b></summary>
 
 You should have access to an instance of App Connect with a deployed instance of a Designer
 
@@ -55,6 +59,7 @@ Tri -> Max | N/A | N/A | Your Maximo apikey | 'header' | 'apikey'
 
 Once you have connected the account, head back to the Catalog page and rename the account accordingly (mxtririga or trimaximo).
 
+</details>
 
 ## Step 1 - Select an App Connect Flow for deployment
 
