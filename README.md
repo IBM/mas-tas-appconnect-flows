@@ -32,21 +32,7 @@ Space | Inbound & Outbound | Create and Retire
 
 ### App Connect
 
-You should have access to an instance of App Connect with a deployed instance of a Designer 
-
-
-## Step 1 - Select an App Connect Flow for deployment
-
-Locate the .yaml file for the direction you would like to deploy (MX2TRI or TRI2MX) based on the system of the record and download to your local machine. For example, if you are looking to send a Person record from TRIRIGA to Maximo, be sure to use the TRI2MX flow in the Person row.
-
-Asset | Maximo | TRIRIGA
----|---|---
-Person | [MX2TRI](/docs/MAX2Tririga/PLUSTMXPerson2TRI.yaml) | [TRI2MX](/docs/TRI2Maximo/PLUSTTRIPerson2MX.yaml)
-Asset | [MX2TRI](/docs/MAX2Tririga/PLUSTMXAsset2TRI.yaml) | [TRI2MX](/docs/TRI2Maximo/PLUSTTRIAsset2MX.yaml)
-Location | [MX2TRI](/docs/MAX2Tririga/PLUSTMXLocation2TRI.yaml) | [TRI2MX](/docs/TRI2Maximo/PLUSTTRISpace2MX.yaml)
-
-
-## Step 2 - App Connect Config
+You should have access to an instance of App Connect with a deployed instance of a Designer
 
 You will need to create two accounts from the 'Catalog' tab in order to connect the applications.
 
@@ -70,7 +56,18 @@ Tri -> Max | N/A | N/A | Your Maximo apikey | 'header' | 'apikey'
 Once you have connected the account, head back to the Catalog page and rename the account accordingly (mxtririga or trimaximo).
 
 
-## Step 3 - Import and Test the Flows
+## Step 1 - Select an App Connect Flow for deployment
+
+Locate the .yaml file for the direction you would like to deploy (MX2TRI or TRI2MX) based on the system of the record and download to your local machine. For example, if you are looking to send a Person record from TRIRIGA to Maximo, be sure to use the TRI2MX flow in the Person row.
+
+Asset | Maximo | TRIRIGA
+---|---|---
+Person | [MX2TRI](/docs/MAX2Tririga/PLUSTMXPerson2TRI.yaml) | [TRI2MX](/docs/TRI2Maximo/PLUSTTRIPerson2MX.yaml)
+Asset | [MX2TRI](/docs/MAX2Tririga/PLUSTMXAsset2TRI.yaml) | [TRI2MX](/docs/TRI2Maximo/PLUSTTRIAsset2MX.yaml)
+Location | [MX2TRI](/docs/MAX2Tririga/PLUSTMXLocation2TRI.yaml) | [TRI2MX](/docs/TRI2Maximo/PLUSTTRISpace2MX.yaml)
+
+
+## Step 2 - Import the Flows
 
 ### MX2TRI for Person
 
@@ -94,11 +91,14 @@ Go to the 'Test' tab and grab the credentials from the 'POST' option on the left
 
 ![Test the flow](/Pics/Test_Flow.png)
 
-With these in hand, you can use a tool such as Postman along with a payload from the TRIRIGA pre-requisites to test if the flow is working properly. If there are no errors you should see your payload populate in TRIRIGA.
 
 ### TRI2MX for Person
 
 Follow the same steps as above and import the TRI2MX Person flow instead of MX2TRI.
+
+## Step 3 - Test the Flows
+
+With these 3 steps completed, you can use a tool such as Postman along with a payload from the TRIRIGA pre-requisites to test if the flow is working properly. If there are no errors you should see your payload populate in TRIRIGA.
 
 ## References
 [Mapping Document](/docs/TRIRIGA_Maximo_Field_Mapping-Final.xlsx)
