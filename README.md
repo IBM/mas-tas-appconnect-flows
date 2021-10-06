@@ -1,5 +1,9 @@
 # App Connect Flows for MAXIMO/TRIRIGA Application Suites
 
+### Summary
+
+[graph goes here]
+
 ## Pre-requisites
 
 ### Maximo
@@ -18,7 +22,7 @@ Within Maximo, make sure to configure these pre-requisites before you begin.
 
 You should have credentials and access to an instance of TRIRIGA
 
-Download the [OM Package](/docs/APIConnector_v0.4.zip) containing TRIRIGA OSLC Resources for below APIs.
+Download and import the [OM Package](/docs/APIConnector_v0.4.zip) containing TRIRIGA OSLC Resources for below APIs.
 
 Business Object | Integration Type | Supported Integrations
 ---|---|---
@@ -28,12 +32,12 @@ Space | Inbound & Outbound | Create and Retire
 
 ### App Connect
 
-You should have access to an instance of App Connect
+You should have access to an instance of App Connect with a deployed instance of a Designer 
 
 
 ## Step 1 - Select an App Connect Flow for deployment
 
-Locate the .yaml file for the direction you would like to deploy (MX2TRI or TRI2MX) and download to your local machine. 
+Locate the .yaml file for the direction you would like to deploy (MX2TRI or TRI2MX) based on the system of the record and download to your local machine. For example, if you are looking to send a Person record from TRIRIGA to Maximo, be sure to use the TRI2MX flow in the Person row.
 
 Asset | Maximo | TRIRIGA
 ---|---|---
