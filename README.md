@@ -2,7 +2,9 @@
 
 ### Summary
 
-[graph goes here]
+At the end of this process, you should be able to send multiple types of assets from Maximo to TRIRIGA and TRIRIGA to Maximo utilizing App Connect.
+
+<img src="/Pics/TRI-MX-Architecture.jpeg">
 
 ## Pre-requisites
 
@@ -15,8 +17,7 @@ Within Maximo, make sure to configure these pre-requisites before you begin.
 1. Create Organization - TRIRIGA
 2. Create a dummy clearing account in Chart of Accounts
 3. Uncheck validation options in Chart of Accounts
-4. Create a new GL Account for TRIRIGA - (1001, Description: Testing)
-5. Create a site TRIMAIN and set it to active
+4. Create a site TRIMAIN and set it to active
 
   </details>
   
@@ -40,24 +41,24 @@ You should have access to an instance of App Connect with a deployed instance of
 
 You will need to create two accounts from the 'Catalog' tab in order to connect the applications.
 
-![Catalog icon](/Pics/Catalog.png)
+<img src="/Pics/Catalog.png" width=100>
 
 Once all of the connectors have loaded, scroll down to the HTTP Application and select 'Add a New Account'.
 
-![HTTP Application](/Pics/Connector-1.png)
+<img src="/Pics/Connector-1.png">
 
 App Connect creates an account with a generic name in sequential order (Account 1, Account 2, etc.). If this is not your first account, make sure to take note if there are any other generic account names because the number of the one you create will depend on what has already been created. (Example: if Account 1 and Account 2 are present, your new account will be Account 3)
 
-![Connector](/Pics/Connector.png)
+<img src="/Pics/Connector.png" height=600>
 
 See the below table for credentials:
 
-Flow | Username | Password | API key | API location | API key name
----|---|---|---|---|---
-Max -> Tri | Your TRIRIGA Username | Your TRIRIGA Password | N/A | N/A | N/A
-Tri -> Max | N/A | N/A | Your Maximo apikey | 'header' | 'apikey' 
+Flow | Account Name | Username | Password | API key | API location | API key name
+---|---|---|---|---|---|---
+Max -> Tri | mxtririga | Your TRIRIGA Username | Your TRIRIGA Password | N/A | N/A | N/A
+Tri -> Max | trimaximo | N/A | N/A | Your Maximo apikey | 'header' | 'apikey' 
 
-Once you have connected the account, head back to the Catalog page and rename the account accordingly (mxtririga or trimaximo).
+Once you have connected the account, head back to the Catalog page and rename the account according to the Account Name column in the above table.
 
 </details>
 
@@ -72,38 +73,54 @@ Asset | [MX2TRI](/docs/MAX2Tririga/PLUSTMXAsset2TRI.yaml) | [TRI2MX](/docs/TRI2M
 Location | [MX2TRI](/docs/MAX2Tririga/PLUSTMXLocation2TRI.yaml) | [TRI2MX](/docs/TRI2Maximo/PLUSTTRISpace2MX.yaml)
 
 
-## Step 2 - Import the Flows
+## Step 2 - Import the Selected Flow in App Connect
 
-### MX2TRI for Person
+Follow the below steps to import your flow.
 
-From your App Connect Dashboard, click 'New' and select 'Import Flow' from the drop down menu
+<details><summary><b>Import Steps</b></summary>
 
-![Import flow](/Pics/Import.png)
+From your App Connect Dashboard, click 'New' and select 'Import Flow' from the drop down menu.
+
+<img src="/Pics/Import.png" width=200> 
 
 Either drag and drop or select the flow you'd like to import. In this example, we'll be using the MX2TRI Person flow.
 
-![Uploaded_Flow](/Pics/Uploaded_Flow.png)
+<img src="/Pics/Uploaded_Flow.png" width=300>
 
 Your flow should now be uploaded onto your App Connect instance. From this screen you can navigate using the 'Edit flow' button to see the individual nodes of this flow. Be sure to select the HTTP account that you configured for Maximo to TRIRIGA for the connector. 
 
-![Completed Flow](/Pics/Completed_Flow.png)
+<img src="/Pics/Completed_Flow.png">
 
 To test this flow, click on the three dots in the top right corner and select 'Start API'.
 
-![Start_Flow](/Pics/Start_API.png)
+<img src="/Pics/Start_API.png" width=250>
 
-Go to the 'Test' tab and grab the credentials from the 'POST' option on the left side of the screen
+Go to the 'Test' tab and select the 'POST' option on the left side of the screen.
 
 ![Test the flow](/Pics/Test_Flow.png)
+ 
+Click on 'Try It' and grab the url and security credentials from this screen for the next step.
+ 
+<img src="/Pics/AppConnect-Config-Full.png" >
 
+</details>
 
-### TRI2MX for Person
+## Step 3 - Configure Maximo and TRIRIGA instances with App Connect urls
 
-Follow the same steps as above and import the TRI2MX Person flow instead of MX2TRI.
+Using the credentials from the end of Step 2, populate your instances of Maximo and TRIRIGA with the correct End Points to establish the correct connection.
 
-## Step 3 - Test the Flows
+<details><summary><b>Maximo</b></summary>
 
-With these 3 steps completed, you can use a tool such as Postman along with a payload from the TRIRIGA pre-requisites to test if the flow is working properly. If there are no errors you should see your payload populate in TRIRIGA.
+[pictures of End Points in Maximo]
+</details>
+ 
+ <details><summary><b>TRIRIGA</b></summary>
+<img src="/Pics/TRIRIGA-EndPoint.png">
+</details>
+
+## Step 4 - Test the Flow
+
+With these 3 steps completed, you can test the flow with a payload from the TRIRIGA pre-requisites. If there are no errors you should see your payload populate in TRIRIGA.
 
 ## References
 [Mapping Document](/docs/TRIRIGA_Maximo_Field_Mapping-Final.xlsx)
