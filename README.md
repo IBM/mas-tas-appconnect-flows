@@ -41,15 +41,11 @@ You should have access to an instance of App Connect with a deployed instance of
 
 You will need to create two accounts from the 'Catalog' tab in order to connect the applications.
 
-<img src="/Pics/Catalog.png" width=100>
+Once all of the connectors have loaded, type in 'http' to find the HTTP Application.
+ 
+<img src="/Pics/App-Connect-Catalog.jpeg">
 
-Once all of the connectors have loaded, scroll down to the HTTP Application and select 'Add a New Account'.
-
-<img src="/Pics/Connector-1.png">
-
-App Connect creates an account with a generic name in sequential order (Account 1, Account 2, etc.). If this is not your first account, make sure to take note if there are any other generic account names because the number of the one you create will depend on what has already been created. (Example: if Account 1 and Account 2 are present, your new account will be Account 3)
-
-<img src="/Pics/Connector.png" height=600>
+If this is your first account, select 'Connect' to begin setting up the initial HTTP account. If this is not your first account, make sure to take note if there are any other generic account names present because the number of the one you create will depend on what has already been created. App Connect creates an account with a generic name in sequential order (Example: if Account 1 and Account 2 are present, your new account will be Account 3).
 
 See the below table for credentials:
 
@@ -58,13 +54,19 @@ Flow | Account Name | Username | Password | API key | API location | API key nam
 Max -> Tri | mxtririga | Your TRIRIGA Username | Your TRIRIGA Password | N/A | N/A | N/A
 Tri -> Max | trimaximo | N/A | N/A | Your Maximo apikey | 'header' | 'apikey' 
 
-Once you have connected the account, head back to the Catalog page and rename the account according to the Account Name column in the above table.
+Once you have connected the account, head back to the HTTP Application on the Catalog page and rename the new account according to the Account Name column in the above table.
 
 </details>
 
 ## Step 1 - Select an App Connect Flow for deployment
 
-Locate the .yaml file for the direction you would like to deploy (MX2TRI or TRI2MX) based on the system of the record and download to your local machine. For example, if you are looking to send a Person record from TRIRIGA to Maximo, be sure to use the TRI2MX flow in the Person row.
+App Connect is used to synchronize records in both Maximo and TRIRIGA. When there is a change on one application, this triggers a request to App Connect which updates or populates the records in the other application. For example, take the Maximo to TRIRIGA flow for a Person record:
+
+[graph of flow]
+
+In Maximo a record for an employee is updated to reflect a change in address. That triggers the App Connect flow and a request with the updated record to be sent to Maximo. The flow parses the JSON of the request, maps the fields from Maximo to TRIRIGA, and then the HTTP node sends a Post request to add or change the record in TRIRIGA.
+
+Locate the .yaml file for the direction you would like to deploy (MX2TRI or TRI2MX) based on your system of record and download to your local machine. From the previous example, you would use the MX2TRI flow in the Person row.
 
 Asset | Maximo | TRIRIGA
 ---|---|---
@@ -81,7 +83,7 @@ Follow the below steps to import your flow.
 
 From your App Connect Dashboard, click 'New' and select 'Import Flow' from the drop down menu.
 
-<img src="/Pics/Import.png" width=200> 
+<img src="/Pics/App-Connect-Dashboard.jpeg"> 
 
 Either drag and drop or select the flow you'd like to import. In this example, we'll be using the MX2TRI Person flow.
 
@@ -91,13 +93,13 @@ Your flow should now be uploaded onto your App Connect instance. From this scree
 
 <img src="/Pics/Completed_Flow.png">
 
-To test this flow, click on the three dots in the top right corner and select 'Start API'.
+To test this flow, click 'Done' on the top right of the screen then click on the three dots in the top right corner and select 'Start API'.
 
 <img src="/Pics/Start_API.png" width=250>
 
 Go to the 'Test' tab and select the 'POST' option on the left side of the screen.
 
-![Test the flow](/Pics/Test_Flow.png)
+<img src="/Pics/Test_Flow.png">
  
 Click on 'Try It' and grab the url and security credentials from this screen for the next step.
  
@@ -111,16 +113,41 @@ Using the credentials from the end of Step 2, populate your instances of Maximo 
 
 <details><summary><b>Maximo</b></summary>
 
-[pictures of End Points in Maximo]
+From the main page of Maximo, click the menu icon on the top left and navigate to Integration -> End Points
+ 
+<img src="/Pics/Maximo-EndPoint-Navigation.jpeg" >
+ 
+Fill in the properties with the url, username, and password from Step 2
+ 
+<img src="/Pics/Maximo-EndPoint-Properties.png" >
+ 
+Click the 'Test' button at the bottom right of the screen and send a simple {"hello":"world"} to make sure the End Point returns a 200 status code. If it does not return a successful status code, refer to the Troubleshooting section.
+ 
 </details>
  
  <details><summary><b>TRIRIGA</b></summary>
+
+From the main page of TRIRIGA, click on Tools -> System Setup -> Integration -> Integration Object.
+ 
+Under the 'Name' column, type in 'apic', and select the integration object that pertains to the record you're sending. 
+ 
 <img src="/Pics/TRIRIGA-EndPoint.png">
+ 
+Click on the object and fill in the credentials in the pop-up box.
+ 
 </details>
 
 ## Step 4 - Test the Flow
 
-With these 3 steps completed, you can test the flow with a payload from the TRIRIGA pre-requisites. If there are no errors you should see your payload populate in TRIRIGA.
+With these 3 steps completed, you can test the flow with a payload.
+
+Head back to the 'Try It' page in your deployed flow where you collected your credentials and scroll down to the bottom of the page under Parameters.
+
+<img src="/Pics/App-Connect-Test.jpeg" >
+
+In here, you can generate a test payload and send it through the flow to monitor if the information populates in the desired application.
+
+If you get a response other than 200 from the Test, refer to Troubleshooting.
 
 ## References
 [Mapping Document](/docs/TRIRIGA_Maximo_Field_Mapping-Final.xlsx)
