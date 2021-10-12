@@ -12,12 +12,152 @@ At the end of this process, you should be able to send multiple types of assets 
 
 You should have credentials and access to an instance of Maximo.
 
-Within Maximo, make sure to configure these pre-requisites before you begin.
+Within Maximo, you will need to configure your instance to be ready to receive records from TRIRIGA. If these pre-requisites are not completed, the action will not be recorded.
 
-1. Create Organization - TRIRIGA
-2. Create a dummy clearing account in Chart of Accounts
-3. Uncheck validation options in Chart of Accounts
-4. Create a site TRIMAIN and set it to active
+1. Create an Organization named TRIRIGA
+ 
+  - Navigate to the 'Organizations' page and click the blue + button on the top row.
+  - Fill in the Organization name with TRIRIGA and the description as "TRIRIGA Organization".
+  - Fill in the remaining required fields as such
+    1. Base Currency 1: USD
+    2. Item Set: SET1
+    3. Company Set: COMPSET1
+    4. Default Item Status: PENDING
+    5. Default Stock Category: STK
+  - Click Save Organization on the left side of the screen under Common Actions. We will come back later to set to Active once we have a clearing account.
+
+2. Create a site TRIMAIN and set it to active
+ 
+  - On the Organization page, click on the 'Sites' tab at the top of the page.
+  - Click New Row under 'Sites' and enter TRIMAIN for Site and "MAIN Site" for Description. Set the site to Active.
+  - Click Save Organization.
+
+3. Create a Testing clearing account in Chart of Accounts
+  
+  - Navigate to Financial -> Chart of Accounts and click on the previously created TRIRIGA org
+  - There should be no GL Accounts for TRIRIGA present
+  -
+
+4. Create the PLUSTTRIRIGA External System
+
+  - Navigate to Integration -> External Systems and click on the blue plus button at the top of the page.
+  - Under the System name fill in PLUSTTRIRIGA and in the Description fill in "To integrate Maximo with TRIRIGA"
+  - Enable the System and then fill in the Queues on the right hand side as follows:
+    1. Outbound Sequential Queue: jms/maximo/int/queues/sqout
+    2. Inbound Sequential Queue: jms/maximo/int/queues/sqin
+    3. Inbound Continuous Queue: jms/maximo/int/queues/cqin
+  - Save the External System
+
+5. Create the Publish Channels for each integration
+
+  - Navigate to Integration -> Publish Channels and click on the blue plus button at the top of the page. Do this for each integration.
+  - For Asset
+    1. Under the System name fill in PLUSTMXASSETInterface and in the Description fill in "ASSETS"
+    2. Select 'MXASSET' under Object Structure which will populate the Object Structure Sub-Records table
+    3. Click on 'Enable Event Listener' on the left side under More Actions
+    4. Make sure Publish JSON and Retain MBO's are checked, the Operation should default to Publish and the Adapter should default to MAXIMO.
+    5. Click 'Save Publish Channel' on the left under Common Actions
+  - For Location
+    1. Under the System name fill in PLUSTMXOPERLOCInterface and in the Description fill in "OPERATION LOCATION"
+    2. Select 'MXOPERLOC' under Object Structure which will populate the Object Structure Sub-Records table
+    3. Click on 'Enable Event Listener' on the left side under More Actions
+    4. Make sure Publish JSON and Retain MBO's are checked, the Operation should default to Publish and the Adapter should default to MAXIMO.
+    5. Click 'Save Publish Channel' on the left under Common Actions
+  - For Person
+    1. Under the System name fill in PLUSTMXPERSONInterface and in the Description fill in "PERSON"
+    2. Select 'MXPERSON' under Object Structure which will populate the Object Structure Sub-Records table
+    3. Click on 'Enable Event Listener' on the left side under More Actions
+    4. Make sure Publish JSON and Retain MBO's are checked, the Operation should default to Publish and the Adapter should default to MAXIMO.
+    5. Click 'Save Publish Channel' on the left under Common Actions
+
+ 6. Create the Enterprise Services for each integration
+ 
+  - Navigate to Integration -> Enterprise Services and click on the blue plus button at the top of the page
+  - For Asset
+    1. Under the System name fill in PLUSTMXASSETInterface and in the Description fill in "ASSETS"
+    2. Select 'MXASSET' under Object Structure which will populate the Object Structure Sub-Records table
+    3. Click on 'Enable Event Listener' on the left side under More Actions
+    4. Make sure Publish JSON and Retain MBO's are checked, the Operation should default to Publish and the Adapter should default to MAXIMO.
+    5. Click 'Save Publish Channel' on the left under Common Actions
+  - For Location
+    1. Under the System name fill in PLUSTMXOPERLOCInterface and in the Description fill in "OPERATION LOCATION"
+    2. Select 'MXOPERLOC' under Object Structure which will populate the Object Structure Sub-Records table
+    3. Click on 'Enable Event Listener' on the left side under More Actions
+    4. Make sure Publish JSON and Retain MBO's are checked, the Operation should default to Publish and the Adapter should default to MAXIMO.
+    5. Click 'Save Publish Channel' on the left under Common Actions
+  - For Person
+    1. Under the System name fill in PLUSTMXPERSONInterface and in the Description fill in "PERSON"
+    2. Select 'MXPERSON' under Object Structure which will populate the Object Structure Sub-Records table
+    3. Click on 'Enable Event Listener' on the left side under More Actions
+    4. Make sure Publish JSON and Retain MBO's are checked, the Operation should default to Publish and the Adapter should default to MAXIMO.
+    5. Click 'Save Publish Channel' on the left under Common Actions
+
+7. Create the End Points for each integration 
+ 
+  - Navigate to Integration -> End Points and click on the blue plus bitton at the top of the page
+  - For Asset
+    1. Under End Point fill in PLUSTASSET and in the Description fill in "AppConnect ASSET outbound to TRIRIGA"
+    2. Select 'HTTP' for Handler
+    3. Click on 'Save End Point' on the left side under More Actions which will populate the Properties for the End Point
+    4. Until the flows have a destination url, we can only fill in certain fields:
+       - HEADERS: "Content-Type: application/json"
+       - HTTPMETHOD: POST
+    5. Save the End Point
+ 
+  - For Location
+    1. Under End Point fill in PLUSTLOCATION and in the Description fill in "AppConnect LOCATION outbound to TRIRIGA"
+    2. Select 'HTTP' for Handler
+    3. Click on 'Save End Point' on the left side under More Actions which will populate the Properties for the End Point
+    4. Until the flows have a destination url, we can only fill in certain fields:
+       - HEADERS: "Content-Type: application/json"
+       - HTTPMETHOD: POST
+    5. Save the End Point
+  - For Person
+    1. Under End Point fill in PLUSTPERSON and in the Description fill in "AppConnect PERSON outbound to TRIRIGA"
+    2. Select 'HTTP' for Handler
+    3. Click on 'Save End Point' on the left side under More Actions which will populate the Properties for the End Point
+    4. Until the flows have a destination url, we can only fill in certain fields:
+       - HEADERS: "Content-Type: application/json"
+       - HTTPMETHOD: POST
+    5. Save the End Point
+
+
+8. Link the Publish Channels & Enterprise Services to the PLUSTTRIRIGA External System
+ 
+  - On the External Systems page, switch over to the Publish Channels tab. One at a time, click New Row and select the Publish Channel for the integrations you just created. When you have finished, your linked Publish Channels should look like the table below:
+ 
+  Channel | Description | Adaptor | End Point | User Defined | Enabled
+  ---|---|---|---|---|---
+  PLUSTMXASSETInterface| ASSETS | MAXIMO | PLUSTASSET | Yes | Yes
+  PLUSTMXOPERLOCInterface | OPERATION LOCATION | MAXIMO | PLUSTLOCATION | Yes | Yes
+  PLUSTMXPERSONInterface | PERSON | MAXIMO | PLUSTPERSON | Yes | Yes
+ 
+  - Save the External System
+  - Switch over to the Enterprise Services tab. One at a time, click New Row and select the Enterprise Service for the integrations you just created. When you have finished, your linked Enterprise Services should look like the table below:
+ 
+  Service | Description | Adaptor | Operation | User Defined | Enabled | Use Continuous Queue?
+  ---|---|---|---|---|---|---
+  PLUSTMXASSETInterface| ASSETS | MAXIMO | Sync | Yes | Yes | Yes
+  PLUSTMXOPERLOCInterface | OPERATION LOCATION | MAXIMO | Sync | Yes | Yes | Yes
+  PLUSTMXPERSONInterface | PERSON | MAXIMO | Sync | Yes | Yes | Yes
+ 
+  - Save the External System
+
+9. System Properties
+  -
+  -
+  -  
+
+10. Database Configuration
+  -
+  -
+  -  
+
+11. API Key
+  -
+  -
+  -  
+
 
   </details>
   
@@ -62,7 +202,7 @@ Once you have connected the account, head back to the HTTP Application on the Ca
 
 App Connect is used to synchronize records in both Maximo and TRIRIGA. When there is a change on one application, this triggers a request to App Connect which updates or populates the records in the other application. For example, take the Maximo to TRIRIGA flow for a Person record:
 
-[graph of flow]
+<img src="/Pics/MX2TRI-Graph.png" >
 
 In Maximo a record for an employee is updated to reflect a change in address. That triggers the App Connect flow and a request with the updated record to be sent to Maximo. The flow parses the JSON of the request, maps the fields from Maximo to TRIRIGA, and then the HTTP node sends a Post request to add or change the record in TRIRIGA.
 
