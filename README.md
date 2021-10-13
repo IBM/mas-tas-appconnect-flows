@@ -174,6 +174,8 @@ Building Equipment | Inbound & Outbound | Create and Retire
 Space | Inbound & Outbound | Create and Retire
   
   </details>
+  
+Configure TRIRIGA Integrations Objects with App Connect URLs.
 
  <details><summary><b>App Connect</b></summary>
 
