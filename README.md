@@ -14,7 +14,7 @@ You should have credentials and access to an instance of Maximo.
 
 Within Maximo, you will need to configure your instance to be ready to receive records from TRIRIGA. If these pre-requisites are not completed, the action will not be recorded.
 
-1. Create an Organization named TRIRIGA
+### 1. Create an Organization named TRIRIGA
  
   - Navigate to the 'Organizations' page and click the blue + button on the top row.
   - Fill in the Organization name with TRIRIGA and the description as "TRIRIGA Organization".
@@ -26,19 +26,23 @@ Within Maximo, you will need to configure your instance to be ready to receive r
     5. Default Stock Category: STK
   - Click Save Organization on the left side of the screen under Common Actions. We will come back later to set to Active once we have a clearing account.
 
-2. Create a site TRIMAIN and set it to active
+### 2. Create a site TRIMAIN and set it to active
  
   - On the Organization page, click on the 'Sites' tab at the top of the page.
   - Click New Row under 'Sites' and enter TRIMAIN for Site and "MAIN Site" for Description. Set the site to Active.
   - Click Save Organization.
 
-3. Create a Testing clearing account in Chart of Accounts
+### 3. Create a Testing clearing account in Chart of Accounts
   
-  - Navigate to Financial -> Chart of Accounts and click on the previously created TRIRIGA org
-  - There should be no GL Accounts for TRIRIGA present
-  -
+  - Navigate to Financial -> Chart of Accounts and click on the previously created TRIRIGA org in the Organizations table. Currently, there should be no GL Accounts for TRIRIGA present
+  - Click 'GL Component Maintenance' on the left side under More Actions and add a New Row with the following values:
+    1. GL Component Value: 1001
+    2. Description: Testing
+    3. Active?: Yes
+  - Click OK and you should be able to add a GL Account. Click New Row under GL Accounts for TRIRIGA and click the magnifying glass to search for the GL Component you just created. Select it and it should populate in the GL Account & Description fields. The Active Date field should auto populate to the current date.
+ - Now that this account is present, head back to Organizations and update the TRIRIGA organization to show the Clearing Account you just created, tick the Active box, and click Save Organization.
 
-4. Create the PLUSTTRIRIGA External System
+### 4. Create the PLUSTTRIRIGA External System
 
   - Navigate to Integration -> External Systems and click on the blue plus button at the top of the page.
   - Under the System name fill in PLUSTTRIRIGA and in the Description fill in "To integrate Maximo with TRIRIGA"
@@ -48,7 +52,7 @@ Within Maximo, you will need to configure your instance to be ready to receive r
     3. Inbound Continuous Queue: jms/maximo/int/queues/cqin
   - Save the External System
 
-5. Create the Publish Channels for each integration
+### 5. Create the Publish Channels for each integration
 
   - Navigate to Integration -> Publish Channels and click on the blue plus button at the top of the page. Do this for each integration.
   - For Asset
@@ -70,7 +74,7 @@ Within Maximo, you will need to configure your instance to be ready to receive r
     4. Make sure Publish JSON and Retain MBO's are checked, the Operation should default to Publish and the Adapter should default to MAXIMO.
     5. Click 'Save Publish Channel' on the left under Common Actions
 
- 6. Create the Enterprise Services for each integration
+### 6. Create the Enterprise Services for each integration
  
   - Navigate to Integration -> Enterprise Services and click on the blue plus button at the top of the page
   - For Asset
@@ -92,7 +96,7 @@ Within Maximo, you will need to configure your instance to be ready to receive r
     4. Make sure Publish JSON and Retain MBO's are checked, the Operation should default to Publish and the Adapter should default to MAXIMO.
     5. Click 'Save Publish Channel' on the left under Common Actions
 
-7. Create the End Points for each integration 
+### 7. Create the End Points for each integration 
  
   - Navigate to Integration -> End Points and click on the blue plus bitton at the top of the page
   - For Asset
@@ -122,7 +126,7 @@ Within Maximo, you will need to configure your instance to be ready to receive r
     5. Save the End Point
 
 
-8. Link the Publish Channels & Enterprise Services to the PLUSTTRIRIGA External System
+### 8. Link the Publish Channels & Enterprise Services to the PLUSTTRIRIGA External System
  
   - On the External Systems page, switch over to the Publish Channels tab. One at a time, click New Row and select the Publish Channel for the integrations you just created. When you have finished, your linked Publish Channels should look like the table below:
  
@@ -143,21 +147,33 @@ Within Maximo, you will need to configure your instance to be ready to receive r
  
   - Save the External System
 
-9. System Properties
+### 9a. API Key (Maximo-X)
+ 
+  - First, check to see if your version of Maximo comes with Maximo-X. Navigate to Administration -> Administration and a new tab/window should open with the Maximo-x application. If you are having trouble reaching this page or it is not installed, follow these steps in order to create an API key.
+  - You should be on a page titled 'Integration'. Click on the tab at the top of the page that says API Keys and click on the button with the blue plus sign that reads 'Add API key'
+  -  Select user 'MXINTADM' and click the Add button to generate an API key for this user. Securely store this API key for later use.
+ 
+### 9b. API Key (No Maximo-X)
+ 
+  - Follow the steps in [this documentation](https://www.ibm.com/docs/en/mam/7.6.1.2?topic=components-api-keys) to generate an API key for your user
+ 
+### 10. System Properties
+ 
   -
   -
   -  
 
-10. Database Configuration
+### 11. Database Configuration
+ 
   -
   -
   -  
-
-11. API Key
+ 
+### 12. Integration Controls
+ 
   -
   -
-  -  
-
+  -
 
   </details>
   
@@ -174,11 +190,14 @@ Building Equipment | Inbound & Outbound | Create and Retire
 Space | Inbound & Outbound | Create and Retire
   
   </details>
-  
 
  <details><summary><b>App Connect</b></summary>
 
-You should have access to an instance of App Connect with a deployed instance of a Designer
+### You should have access to an instance of App Connect with a deployed instance of a Designer
+ 
+ 
+ 
+## If your instances of Maximo and TRIRIGA are behind the same firewall, use the directions below:
 
 You will need to create two accounts from the 'Catalog' tab in order to connect the applications.
 
@@ -196,6 +215,12 @@ Max -> Tri | mxtririga | Your TRIRIGA Username | Your TRIRIGA Password | N/A | N
 Tri -> Max | trimaximo | N/A | N/A | Your Maximo apikey | 'header' | 'apikey' 
 
 Once you have connected the account, head back to the HTTP Application on the Catalog page and rename the new account according to the Account Name column in the above table.
+ 
+## If your instances of Maximo and TRIRIGA are behind different firewalls (ex. one is on-prem and the other is a cloud env) you will need to set up a secure connection between them. 
+ 
+ - In App Connect, navigate to the Catalog and type http into the search bar to bring up the HTTP application. Select 'Add a New Account' and scroll down to the 'Network name' box and select Create a new network.
+ - This will open a box with the directions to creating a secure connection to your network. Follow these steps on your server and once you have configured the network correctly click 'Test + Connect'
+ - You should now have a secure network ready to use for your HTTP requests.
 
 </details>
 
@@ -234,11 +259,11 @@ Your flow should now be uploaded onto your App Connect instance. From this scree
 
 <img src="/Pics/Completed_Flow.png">
 
-To test this flow, click 'Done' on the top right of the screen then click on the three dots in the top right corner and select 'Start API'.
+Click 'Done' on the top right of the screen then click on the three dots in the top right corner and select 'Start API'.
 
 <img src="/Pics/Start_API.png" width=250>
 
-Go to the 'Test' tab and select the 'POST' option on the left side of the screen.
+Go to the 'Test' tab once it shows that the flow is 'Running' and select the 'POST' option on the left side of the screen.
 
 <img src="/Pics/Test_Flow.png">
  
@@ -250,7 +275,7 @@ Click on 'Try It' and grab the url and security credentials from this screen for
 
 ## Step 3 - Configure Maximo and TRIRIGA instances with App Connect urls
 
-Using the credentials from the end of Step 2, populate your instances of Maximo and TRIRIGA with the correct End Points to establish the correct connection.
+Using the credentials from the end of Step 2, populate your instances of Maximo and TRIRIGA with the correct End Points of the flow you just created.
 
 <details><summary><b>Maximo</b></summary>
 
@@ -295,4 +320,15 @@ If you get a response other than 200 from the Test, refer to Troubleshooting.
 
 ## Troubleshooting
 
+<details><summary><b>Common errors that arise from App Connect</b></summary>
+ 1. Testing the End Point
+ 2. Testing the whole flow
+</details>
+<details><summary><b>Common errors that arise from Maximo</b></summary>
+ 
+</details>
+
+<details><summary><b>Common errors that arise from TRIRIGA</b></summary>
+ 
+</details>
 
