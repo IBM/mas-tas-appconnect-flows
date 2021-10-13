@@ -165,7 +165,7 @@ Within Maximo, you will need to configure your instance to be ready to receive r
 
 You should have credentials and access to an instance of TRIRIGA
 
-Download and import the [OM Package](/docs/APIConnector_v0.4.zip) containing TRIRIGA OSLC Resources for below APIs.
+Navigate to Tools > Object Migration and import the [OM Package](/docs/APIConnector_v0.4.zip) containing TRIRIGA OSLC Resources for below APIs.
 
 Business Object | Integration Type | Supported Integrations
 ---|---|---
