@@ -190,13 +190,29 @@ Within Maximo, you will need to configure your instance to be ready to receive r
 You should have credentials and access to an instance of TRIRIGA
 
 Navigate to Tools > Object Migration and import the [OM Package](/docs/APIConnector_v0.4.zip) containing TRIRIGA OSLC Resources for below APIs.
+ 
+OM Package include below APIs and its dependents:
 
-Business Object | Integration Type | Supported Integrations
----|---|---
-People | Inbound & Outbound | Create and Retire
-Building Equipment | Inbound & Outbound | Create and Retire
-Space | Inbound & Outbound | Create and Retire
-  
+Object | Integration Direction 
+---|---
+triAPICAssetCF | TRIRIGA Inbound 
+triAPICBuildingCF | TRIRIGA Inbound 
+triAPICFloorCF | TRIRIGA Inbound 
+triAPICPeopleCF | TRIRIGA Inbound 
+triAPICPropertyCF | TRIRIGA Inbound 
+triAPICServiceRequestCF | TRIRIGA Inbound 
+triAPICSpaceCF | TRIRIGA Inbound 
+triAPICWorkTaskCF | TRIRIGA Inbound 
+triWorkTask - APIC - HTTP Post | TRIRIGA Outbound
+triSpace - APIC - HTTP Post | TRIRIGA Outbound
+triServiceRequest - APIC - HTTP Post | TRIRIGA Outbound
+triProperty - APIC - HTTP Post | TRIRIGA Outbound
+triPeople - APIC - HTTP Post | TRIRIGA Outbound
+triFloor - APIC - HTTP Post | TRIRIGA Outbound
+triBuildingEquipment - APIC - HTTP Post | TRIRIGA Outbound
+triBuilding - APIC - HTTP Post | TRIRIGA Outbound
+
+ 
   </details>
 
  <details><summary><b>App Connect</b></summary>
