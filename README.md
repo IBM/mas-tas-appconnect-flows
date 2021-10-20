@@ -356,5 +356,7 @@ If you get a response other than 200 from the Test, refer to Troubleshooting.
 
 <details><summary><b>Common errors that arise from TRIRIGA</b></summary>
  
+ - Clear OSLC Cache in TRIRIGA Admin Console in case the integrations do not work in intended manner.
+ 
 </details>
 
