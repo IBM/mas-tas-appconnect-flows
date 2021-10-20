@@ -157,23 +157,31 @@ Within Maximo, you will need to configure your instance to be ready to receive r
  
   - Follow the steps in [this documentation](https://www.ibm.com/docs/en/mam/7.6.1.2?topic=components-api-keys) to generate an API key for your user
  
-### 10. System Properties
+### 10. Integration Controls
  
-  -
-  -
-  -  
-
-### 11. Database Configuration
+  - On the left side of the External Systems page, select Setup Integration Controls under 'More Actions'
+  - There should be 6 Integration Controls listed with the following associations:
  
-  -
-  -
-  -  
- 
-### 12. Integration Controls
- 
-  -
-  -
-  -
+    Integration Control | MAXIMO Value | External Value
+    ---|---|---
+    PLUSTLOCSTATUS | ACTIVE | ACTIVE
+    "" | INACTIVE | REVIEW IN PROGRESS
+    "" | OPERATING | OPERATING
+    PLUSTORG | TRIMAIN | IBM
+    "" | TRIRIGA | TRIRIGA
+    PLUSTORGEN | TRIRIGA | EAGLENA
+    "" | TRIRIGA | IBM
+    "" | TRIRIGA | MAXIMO ORG
+    "" | TRIRIGA | TEST
+    "" | TRIRIGA | TRIRIGA
+    PLUSTPRIORITY | 1 | High
+    "" | 2 | Medium
+    "" | 3 | Low
+    PLUSTSITEEN | TRIMAIN | BEDFORD
+    "" | TRIMAIN | SPACE 01
+    "" | TRIMAIN | TEST
+    "" | TRIMAIN | TRIMAIN
+  
 
   </details>
   
@@ -194,10 +202,6 @@ Space | Inbound & Outbound | Create and Retire
  <details><summary><b>App Connect</b></summary>
 
 ### You should have access to an instance of App Connect with a deployed instance of a Designer
- 
- 
- 
-## If your instances of Maximo and TRIRIGA are behind the same firewall, use the directions below:
 
 You will need to create two accounts from the 'Catalog' tab in order to connect the applications.
 
@@ -216,11 +220,6 @@ Tri -> Max | trimaximo | N/A | N/A | Your Maximo apikey | 'header' | 'apikey'
 
 Once you have connected the account, head back to the HTTP Application on the Catalog page and rename the new account according to the Account Name column in the above table.
  
-## If your instances of Maximo and TRIRIGA are behind different firewalls (ex. one is on-prem and the other is a cloud env) you will need to set up a secure connection between them. 
- 
- - In App Connect, navigate to the Catalog and type http into the search bar to bring up the HTTP application. Select 'Add a New Account' and scroll down to the 'Network name' box and select Create a new network.
- - This will open a box with the directions to creating a secure connection to your network. Follow these steps on your server and once you have configured the network correctly click 'Test + Connect'
- - You should now have a secure network ready to use for your HTTP requests.
 
 </details>
 
@@ -321,10 +320,21 @@ If you get a response other than 200 from the Test, refer to Troubleshooting.
 ## Troubleshooting
 
 <details><summary><b>Common errors that arise from App Connect</b></summary>
- 1. Testing the End Point
- 2. Testing the whole flow
+
+ 
+ ## Testing the whole flow
+ 
+ - If you get a 404 Not Found error when trying to test your flow, this could mean that your flow is not running. Double check to make sure the flow shows a green dot and says 'Running' after you have made edits.
+ 
+ - If you get a 400 Bad Request error when testing your flow, this could mean that you have the wrong account configurations. Double check to make sure the Accounts you set up in the App Connect pre-requisite section are correct.
+ 
 </details>
 <details><summary><b>Common errors that arise from Maximo</b></summary>
+ 
+ ## Testing the End Point
+ 
+ - If you get an error that reads "The response code received from the HTTP request from the endpoint is not successful.", this is related to the End Point that you configured. Double check and make sure that you have put in the correct values in 'End Points'. If you copy/pasted the values, make sure there are no accidental spaces at the beginning or end.
+ 
  
 </details>
 
