@@ -2,15 +2,16 @@
 
 ### Summary
 
-At the end of this process, you should be able to send multiple types of assets from Maximo to TRIRIGA and TRIRIGA to Maximo utilizing App Connect.
+This repository is for a developer looking to sync the databases of Maximo and TRIRIGA using App Connect flows to facilitate. At the end of this process, you should be able to send a Person, Asset, or  from Maximo to TRIRIGA and TRIRIGA to Maximo utilizing App Connect.
 
-<img src="/Pics/TRI-MX-Architecture.jpeg">
 
 ## Pre-requisites
 
  <details><summary><b>MAXIMO</b></summary>
 
 You should have credentials and access to an instance of Maximo.
+ 
+The following steps and pre-requisites are done against a Maximo demo database. The naming conventions may slightly differ from this, but these are the necessary components. 
 
 Within Maximo, you will need to configure your instance to be ready to receive records from TRIRIGA. If these pre-requisites are not completed, the action will not be recorded.
 
@@ -54,22 +55,22 @@ Within Maximo, you will need to configure your instance to be ready to receive r
 
 ### 5. Create the Publish Channels for each integration
 
-  - Navigate to Integration -> Publish Channels and click on the blue plus button at the top of the page. Do this for each integration.
+  - Navigate to Integration -> Publish Channels
   - For Asset
-    1. Under the System name fill in PLUSTMXASSETInterface and in the Description fill in "ASSETS"
-    2. Select 'MXASSET' under Object Structure which will populate the Object Structure Sub-Records table
+    1. Search for 'MXASSETInterface' under the Publish Channel field. Click on the channel and from the left side of the screen select 'Duplicate Publish Channel' 
+    2. Rename the channel PLUSTMXASSETInterface
     3. Click on 'Enable Event Listener' on the left side under More Actions
     4. Make sure Publish JSON and Retain MBO's are checked, the Operation should default to Publish and the Adapter should default to MAXIMO.
     5. Click 'Save Publish Channel' on the left under Common Actions
   - For Location
-    1. Under the System name fill in PLUSTMXOPERLOCInterface and in the Description fill in "OPERATION LOCATION"
-    2. Select 'MXOPERLOC' under Object Structure which will populate the Object Structure Sub-Records table
+    1. Search for 'MXOPERLOCInterface' under the Publish Channel field. Click on the channel and from the left side of the screen select 'Duplicate Publish Channel' 
+    2. Rename the channel PLUSTMXOPERLOCInterface
     3. Click on 'Enable Event Listener' on the left side under More Actions
     4. Make sure Publish JSON and Retain MBO's are checked, the Operation should default to Publish and the Adapter should default to MAXIMO.
     5. Click 'Save Publish Channel' on the left under Common Actions
   - For Person
-    1. Under the System name fill in PLUSTMXPERSONInterface and in the Description fill in "PERSON"
-    2. Select 'MXPERSON' under Object Structure which will populate the Object Structure Sub-Records table
+    1. Search for 'MXPERSONInterface' under the Publish Channel field. Click on the channel and from the left side of the screen select 'Duplicate Publish Channel' 
+    2. Rename the channel PLUSTMXPERSONInterface
     3. Click on 'Enable Event Listener' on the left side under More Actions
     4. Make sure Publish JSON and Retain MBO's are checked, the Operation should default to Publish and the Adapter should default to MAXIMO.
     5. Click 'Save Publish Channel' on the left under Common Actions
@@ -181,7 +182,6 @@ Within Maximo, you will need to configure your instance to be ready to receive r
     "" | TRIMAIN | SPACE 01
     "" | TRIMAIN | TEST
     "" | TRIMAIN | TRIMAIN
-  
 
   </details>
   
@@ -232,12 +232,14 @@ See the below table for credentials:
 Flow | Account Name | Username | Password | API key | API location | API key name
 ---|---|---|---|---|---|---
 Max -> Tri | mxtririga | Your TRIRIGA Username | Your TRIRIGA Password | N/A | N/A | N/A
-Tri -> Max | trimaximo | N/A | N/A | Your Maximo apikey | 'header' | 'apikey' 
+Tri -> Max | trimaximo | N/A | N/A | Your Maximo apikey | header | apikey 
 
 Once you have connected the account, head back to the HTTP Application on the Catalog page and rename the new account according to the Account Name column in the above table.
- 
+  
 
 </details>
+
+These pre-requisites are assuming that all three applications are behind the same firewall. If any of these three applications do not share the same firewall, you will need to establish a secure connection between the applications. IBM does provide a product that accomplishes this- Secure Gateway. Learn more about getting started with Secure Gateway [here](https://cloud.ibm.com/docs/SecureGateway?topic=SecureGateway-getting-started-with-sg)
 
 ## Step 1 - Select an App Connect Flow for deployment
 
@@ -279,12 +281,10 @@ Click 'Done' on the top right of the screen then click on the three dots in the 
 <img src="/Pics/Start_API.png" width=250>
 
 Go to the 'Test' tab once it shows that the flow is 'Running' and select the 'POST' option on the left side of the screen.
-
-<img src="/Pics/Test_Flow.png">
  
 Click on 'Try It' and grab the url and security credentials from this screen for the next step.
  
-<img src="/Pics/AppConnect-Config-Full.png" >
+<img src="/Pics/AppConnect-Config-Full.jpeg" >
 
 </details>
 
@@ -302,7 +302,7 @@ Fill in the properties with the url, username, and password from Step 2
  
 <img src="/Pics/Maximo-EndPoint-Properties.png" >
  
-Click the 'Test' button at the bottom right of the screen and send a simple {"hello":"world"} to make sure the End Point returns a 200 status code. If it does not return a successful status code, refer to the Troubleshooting section.
+Click the 'Test' button at the bottom right of the screen and send a simple {"hello":"world"}. With the proper configuration, there will be an expected error that ends with 'Bad Request'. If there is a different error than Bad Request in the Response window, refer to the Troubleshooting section to debug.
  
 </details>
  
