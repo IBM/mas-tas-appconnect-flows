@@ -318,9 +318,39 @@ Click on the object and fill in the credentials in the pop-up box.
  
 </details>
 
-## Step 4 - Test the Flow
+## Step 4 - Configure WebSphere Certificates
 
-With these 3 steps completed, you can test the flow with a payload.
+This step makes a test connection to a Secure Sockets Layer (SSL) port and retrieves the signer from the server during the handshake.
+
+<details><summary><b>Websphere</b></summary>
+
+Login to your Websphere console that is hosting the Maximo server
+
+<img src="/Pics/Websphere-Home.png">
+
+Click on Security -> SSL certificate & key management. Under 'Related Items' click on 'Key stores and certificates'
+
+<img src="/Pics/Websphere-Keystores.png">
+
+Click on 'CellDefaultTrustStore' and on the next page under 'Additional Properties' click on 'Signer certificates'. 
+
+<img src="/Pics/Websphere-Signercerts.png">
+
+From this page, click on the button that says 'Retrieve from Port' and fill in the required fields using the table below
+
+Field | Value
+---|---
+Host | The host from the url in Step 2
+Port | 443
+Alias | appconnect
+
+Once all three have been entered in, click 'Retrieve signer information' and the information from the url will populate on screen. Click save in the box at the top and then repeat the process for 'NodeDefaultTrustStore'
+ 
+ </details>
+
+## Step 5 - Test the Flow
+
+With these 4 steps completed, you can test the flow with a payload.
 
 Head back to the 'Try It' page in your deployed flow where you collected your credentials and scroll down to the bottom of the page under Parameters.
 
