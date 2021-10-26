@@ -2,8 +2,21 @@
 
 ### Summary
 
-This repository is for a developer looking to sync the databases of Maximo and TRIRIGA using App Connect flows to facilitate. At the end of this process, you should be able to send a Person, Asset, or  from Maximo to TRIRIGA and TRIRIGA to Maximo utilizing App Connect.
+This repository is for a developer looking to sync the databases of Maximo and TRIRIGA using App Connect flows to facilitate. App Connect is used to synchronize records in both Maximo and TRIRIGA. When there is a change on one application, this triggers a request to App Connect which updates or populates the records in the other application.
 
+<img src="/Pics/MX2TRI-Graph.png" >
+
+1. In the above example, when a record is updated in Maximo, it will trigger the flow to synchronize with TRIRIGA. There is also a flow that works in the reverse direction, that works in a similar way.
+2. App Connect sends a request with the updated information through the flow towards the end destination (TRIRIGA).
+3. A JSON Parser sifts through the Request and converts it to an object. 
+4. Each object that is returned from the JSON Parser goes through Steps 5-8.
+5. The data from the object is mapped to the corresponding fields in the destination application (TRIRIGA). 
+6. The newly mapped data is sent to the destination application (TRIRIGA) where the record is created or updated.
+7. This record is then validated with the original application (Maximo) via another Post request. 
+8. An ID is either created or updated within the original application (Maximo).
+9. This process is repeated for each object that is present in the original request (Maximo).
+
+At the end of this process, you should be able to send a Person, Asset, or from Maximo to TRIRIGA and TRIRIGA to Maximo utilizing App Connect.
 
 ## Pre-requisites
 
@@ -242,12 +255,6 @@ Once you have connected the account, head back to the HTTP Application on the Ca
 These pre-requisites are assuming that all three applications are behind the same firewall. If any of these three applications do not share the same firewall, you will need to establish a secure connection between the applications. IBM does provide a product that accomplishes this- Secure Gateway. Learn more about getting started with Secure Gateway [here](https://cloud.ibm.com/docs/SecureGateway?topic=SecureGateway-getting-started-with-sg)
 
 ## Step 1 - Select an App Connect Flow for deployment
-
-App Connect is used to synchronize records in both Maximo and TRIRIGA. When there is a change on one application, this triggers a request to App Connect which updates or populates the records in the other application. For example, take the Maximo to TRIRIGA flow for a Person record:
-
-<img src="/Pics/MX2TRI-Graph.png" >
-
-In Maximo a record for an employee is updated to reflect a change in address. That triggers the App Connect flow and a request with the updated record to be sent to Maximo. The flow parses the JSON of the request, maps the fields from Maximo to TRIRIGA, and then the HTTP node sends a Post request to add or change the record in TRIRIGA.
 
 Locate the .yaml file for the direction you would like to deploy (MX2TRI or TRI2MX) based on your system of record and download to your local machine. From the previous example, you would use the MX2TRI flow in the Person row.
 
