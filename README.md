@@ -16,17 +16,17 @@ This repository is for a developer looking to sync the databases of Maximo and T
 8. An ID is either created or updated within the original application (Maximo).
 9. This process is repeated for each object that is present in the original request (Maximo).
 
-At the end of this process, you should be able to send a Person, Asset, or from Maximo to TRIRIGA and TRIRIGA to Maximo utilizing App Connect.
+At the end of this process, a Person, Asset, or Location can be sent from Maximo to TRIRIGA and TRIRIGA to Maximo utilizing App Connect.
 
 ## Pre-requisites
 
  <details><summary><b>MAXIMO</b></summary>
 
-You should have credentials and access to an instance of Maximo.
+Credentials and access to an instance of Maximo as well as the WebSphere application which hosts Maximo are required.
  
 The following steps and pre-requisites are done against a Maximo demo database. The naming conventions may slightly differ from this, but these are the necessary components. 
 
-Within Maximo, you will need to configure your instance to be ready to receive records from TRIRIGA. If these pre-requisites are not completed, the action will not be recorded.
+Within Maximo, configure your instance to be ready to receive records from TRIRIGA. If these pre-requisites are not completed, the action will not be recorded.
 
 ### 1. Create an Organization named TRIRIGA
  
@@ -38,7 +38,7 @@ Within Maximo, you will need to configure your instance to be ready to receive r
     3. Company Set: COMPSET1
     4. Default Item Status: PENDING
     5. Default Stock Category: STK
-  - Click Save Organization on the left side of the screen under Common Actions. We will come back later to set to Active once we have a clearing account.
+  - Click Save Organization on the left side of the screen under Common Actions. This will be set to Active later once there is a clearing account.
 
 ### 2. Create a site TRIMAIN and set it to active
  
@@ -53,8 +53,8 @@ Within Maximo, you will need to configure your instance to be ready to receive r
     1. GL Component Value: 1001
     2. Description: Testing
     3. Active?: Yes
-  - Click OK and you should be able to add a GL Account. Click New Row under GL Accounts for TRIRIGA and click the magnifying glass to search for the GL Component you just created. Select it and it should populate in the GL Account & Description fields. The Active Date field should auto populate to the current date.
- - Now that this account is present, head back to Organizations and update the TRIRIGA organization to show the Clearing Account you just created, tick the Active box, and click Save Organization.
+  - Click OK. Click New Row under GL Accounts for TRIRIGA and click the magnifying glass to search for that GL Component. Select it and it should populate in the GL Account & Description fields. The Active Date field should auto populate to the current date.
+ - Now that this account is present, head back to Organizations and update the TRIRIGA organization to show the just created Clearing Account, tick the Active box, and click Save Organization.
 
 ### 4. Create the PLUSTTRIRIGA External System
 
@@ -142,7 +142,7 @@ Within Maximo, you will need to configure your instance to be ready to receive r
 
 ### 8. Link the Publish Channels & Enterprise Services to the PLUSTTRIRIGA External System
  
-  - On the External Systems page, switch over to the Publish Channels tab. One at a time, click New Row and select the Publish Channel for the integrations you just created. When you have finished, your linked Publish Channels should look like the table below:
+  - On the External Systems page, switch over to the Publish Channels tab. One at a time, click New Row and select the Publish Channel for the just created integrations. Once finished, the linked Publish Channels should look like the table below:
  
   Channel | Description | Adaptor | End Point | User Defined | Enabled
   ---|---|---|---|---|---
@@ -163,13 +163,13 @@ Within Maximo, you will need to configure your instance to be ready to receive r
 
 ### 9a. API Key (Maximo-X)
  
-  - First, check to see if your version of Maximo comes with Maximo-X. Navigate to Administration -> Administration and a new tab/window should open with the Maximo-x application. If you are having trouble reaching this page or it is not installed, follow these steps in order to create an API key.
+  - First, check to see if the version of Maximo comes with Maximo-X. Navigate to Administration -> Administration and a new tab/window should open with the Maximo-x application. If there is trouble reaching this page or it is not installed, follow 9b in order to create an API key.
   - You should be on a page titled 'Integration'. Click on the tab at the top of the page that says API Keys and click on the button with the blue plus sign that reads 'Add API key'
   -  Select user 'MXINTADM' and click the Add button to generate an API key for this user. Securely store this API key for later use.
  
 ### 9b. API Key (No Maximo-X)
  
-  - Follow the steps in [this documentation](https://www.ibm.com/docs/en/mam/7.6.1.2?topic=components-api-keys) to generate an API key for your user
+  - Follow the steps in [this documentation](https://www.ibm.com/docs/en/mam/7.6.1.2?topic=components-api-keys) to generate an API key for the user
  
 ### 10. Integration Controls
  
@@ -200,7 +200,7 @@ Within Maximo, you will need to configure your instance to be ready to receive r
   
  <details><summary><b>TRIRIGA</b></summary>
 
-You should have credentials and access to an instance of TRIRIGA
+Credentials and access to an instance of TRIRIGA are required
 
 Navigate to Tools > Object Migration and import the [OM Package](/docs/APIConnector_v0.4.zip) containing TRIRIGA OSLC Resources for below APIs.
  
@@ -230,15 +230,15 @@ triBuilding - APIC - HTTP Post | TRIRIGA Outbound
 
  <details><summary><b>App Connect</b></summary>
 
-### You should have access to an instance of App Connect with a deployed instance of a Designer
+### Access to an instance of App Connect with a deployed instance of a Designer is required.
 
-You will need to create two accounts from the 'Catalog' tab in order to connect the applications.
+Two accounts are need to be created from the 'Catalog' tab in order to connect the applications.
 
 Once all of the connectors have loaded, type in 'http' to find the HTTP Application.
  
 <img src="/Pics/App-Connect-Catalog.jpeg">
 
-If this is your first account, select 'Connect' to begin setting up the initial HTTP account. If this is not your first account, make sure to take note if there are any other generic account names present because the number of the one you create will depend on what has already been created. App Connect creates an account with a generic name in sequential order (Example: if Account 1 and Account 2 are present, your new account will be Account 3).
+If this is the first account, select 'Connect' to begin setting up the initial HTTP account. If this is not the first account, make sure to take note if there are any other generic account names present because the number of the one created will depend on what has already been created. App Connect creates an account with a generic name in sequential order (Example: if Account 1 and Account 2 are present, the new account will be Account 3).
 
 See the below table for credentials:
 
@@ -247,16 +247,16 @@ Flow | Account Name | Username | Password | API key | API location | API key nam
 Max -> Tri | mxtririga | Your TRIRIGA Username | Your TRIRIGA Password | N/A | N/A | N/A
 Tri -> Max | trimaximo | N/A | N/A | Your Maximo apikey | header | apikey 
 
-Once you have connected the account, head back to the HTTP Application on the Catalog page and rename the new account according to the Account Name column in the above table.
+Once the account is connected, head back to the HTTP Application on the Catalog page and rename the new account according to the Account Name column in the above table.
   
 
 </details>
 
-These pre-requisites are assuming that all three applications are behind the same firewall. If any of these three applications do not share the same firewall, you will need to establish a secure connection between the applications. IBM does provide a product that accomplishes this- Secure Gateway. Learn more about getting started with Secure Gateway [here](https://cloud.ibm.com/docs/SecureGateway?topic=SecureGateway-getting-started-with-sg)
+These pre-requisites are assuming that all three applications are behind the same firewall. If any of these three applications do not share the same firewall, a secure connection between the applications will need to be established. IBM does provide a product that accomplishes this- Secure Gateway. Learn more about getting started with Secure Gateway [here](https://cloud.ibm.com/docs/SecureGateway?topic=SecureGateway-getting-started-with-sg)
 
 ## Step 1 - Select an App Connect Flow for deployment
 
-Locate the .yaml file for the direction you would like to deploy (MX2TRI or TRI2MX) based on your system of record and download to your local machine. From the previous example, you would use the MX2TRI flow in the Person row.
+Locate the .yaml file for the deployment direction (MX2TRI or TRI2MX) based on the system of record and download to the local machine. From the previous example, use the MX2TRI flow in the Person row.
 
 Asset | Maximo | TRIRIGA
 ---|---|---
@@ -267,19 +267,19 @@ Location | [MX2TRI](/docs/MAX2Tririga/PLUSTMXLocation2TRI.yaml) | [TRI2MX](/docs
 
 ## Step 2 - Import the Selected Flow in App Connect
 
-Follow the below steps to import your flow.
+Follow the below steps to import the flow.
 
 <details><summary><b>Import Steps</b></summary>
 
-From your App Connect Dashboard, click 'New' and select 'Import Flow' from the drop down menu.
+From the App Connect Dashboard, click 'New' and select 'Import Flow' from the drop down menu.
 
 <img src="/Pics/App-Connect-Dashboard.jpeg"> 
 
-Either drag and drop or select the flow you'd like to import. In this example, we'll be using the MX2TRI Person flow.
+Either drag and drop or select the flow for import. In this example, the MX2TRI Person flow will be used.
 
 <img src="/Pics/Uploaded_Flow.png" width=300>
 
-Your flow should now be uploaded onto your App Connect instance. From this screen you can navigate using the 'Edit flow' button to see the individual nodes of this flow. Be sure to select the HTTP account that you configured for Maximo to TRIRIGA for the connector. 
+The flow should now be uploaded onto the App Connect instance. From this screen navigate using the 'Edit flow' button to see the individual nodes of this flow. Be sure to select the HTTP account that was configured for Maximo to TRIRIGA for the connector. 
 
 <img src="/Pics/Completed_Flow.png">
 
@@ -297,7 +297,7 @@ Click on 'Try It' and grab the url and security credentials from this screen for
 
 ## Step 3 - Configure Maximo and TRIRIGA instances with App Connect urls
 
-Using the credentials from the end of Step 2, populate your instances of Maximo and TRIRIGA with the correct End Points of the flow you just created.
+Using the credentials from the end of Step 2, populate the instances of Maximo and TRIRIGA with the correct End Points of the recently created flow.
 
 <details><summary><b>Maximo</b></summary>
 
@@ -317,7 +317,7 @@ Click the 'Test' button at the bottom right of the screen and send a simple {"he
 
 From the main page of TRIRIGA, click on Tools -> System Setup -> Integration -> Integration Object.
  
-Under the 'Name' column, type in 'apic', and select the integration object that pertains to the record you're sending. 
+Under the 'Name' column, type in 'apic', and select the integration object that pertains to the record that is getting sent. 
  
 <img src="/Pics/TRIRIGA-EndPoint.png">
  
@@ -331,7 +331,7 @@ This step makes a test connection to a Secure Sockets Layer (SSL) port and retri
 
 <details><summary><b>Websphere</b></summary>
 
-Login to your Websphere console that is hosting the Maximo server
+Login to the Websphere console that is hosting the Maximo server
 
 <img src="/Pics/Websphere-Home.png">
 
@@ -357,15 +357,15 @@ Once all three have been entered in, click 'Retrieve signer information' and the
 
 ## Step 5 - Test the Flow
 
-With these 4 steps completed, you can test the flow with a payload.
+With these 4 steps completed, test the flow with a payload.
 
-Head back to the 'Try It' page in your deployed flow where you collected your credentials and scroll down to the bottom of the page under Parameters.
+Head back to the 'Try It' page in the deployed flow and scroll down to the bottom of the page under Parameters.
 
 <img src="/Pics/App-Connect-Test.jpeg" >
 
-In here, you can generate a test payload and send it through the flow to monitor if the information populates in the desired application.
+In here, generate a test payload and send it through the flow to monitor if the information populates in the desired application.
 
-If you get a response other than 200 from the Test, refer to Troubleshooting.
+If there is a response other than 200 from the Test, refer to Troubleshooting.
 
 ## References
 [Mapping Document](/docs/TRIRIGA_Maximo_Field_Mapping-Final.xlsx)
@@ -377,17 +377,18 @@ If you get a response other than 200 from the Test, refer to Troubleshooting.
  
  ## Testing the whole flow
  
- - If you get a 404 Not Found error when trying to test your flow, this could mean that your flow is not running. Double check to make sure the flow shows a green dot and says 'Running' after you have made edits.
+ - If there is a 404 Not Found error when trying to test the flow, this could mean that the flow is not running. Double check to make sure the flow shows a green dot and says 'Running' after edits have been made.
  
- - If you get a 400 Bad Request error when testing your flow, this could mean that you have the wrong account configurations. Double check to make sure the Accounts you set up in the App Connect pre-requisite section are correct.
+ - If there is a 400 Bad Request error when testing the flow, this could mean the wrong account configurations. Double check to make sure the Accounts from the App Connect pre-requisite section are correct.
  
 </details>
 <details><summary><b>Common errors that arise from Maximo</b></summary>
  
  ## Testing the End Point
  
- - If you get an error that reads "The response code received from the HTTP request from the endpoint is not successful.", this is related to the End Point that you configured. Double check and make sure that you have put in the correct values in 'End Points'. If you copy/pasted the values, make sure there are no accidental spaces at the beginning or end.
+ - If an error reads "The response code received from the HTTP request from the endpoint is not successful.", this is related to the configured End Point. Double check and make sure the values in 'End Points' are correct. Make sure there are no accidental spaces at the beginning or end in the event of the values being copy/pasted.
  
+ - If an error comes back as a 'PKSync error', this is related to the certificates in WebSphere. Double check and confirm that the certificates from Step 4 are correctly configured. 
  
 </details>
 
