@@ -202,28 +202,9 @@ Within Maximo, configure your instance to be ready to receive records from TRIRI
 
 Credentials and access to an instance of TRIRIGA are required
 
-Navigate to Tools > Object Migration and import the [OM Package](/docs/APIConnector_v0.4.zip) containing TRIRIGA OSLC Resources for below APIs.
+Navigate to Tools > Object Migration and import the latest [OM Package](https://github.ibm.com/tririga-connector/apis/tree/master/docs/ompackages) containing TRIRIGA APIs.
  
-OM Package include below APIs and its dependents:
-
-Object | Integration Direction 
----|---
-triAPICAssetCF | TRIRIGA Inbound 
-triAPICBuildingCF | TRIRIGA Inbound 
-triAPICFloorCF | TRIRIGA Inbound 
-triAPICPeopleCF | TRIRIGA Inbound 
-triAPICPropertyCF | TRIRIGA Inbound 
-triAPICServiceRequestCF | TRIRIGA Inbound 
-triAPICSpaceCF | TRIRIGA Inbound 
-triAPICWorkTaskCF | TRIRIGA Inbound 
-triWorkTask - APIC - HTTP Post | TRIRIGA Outbound
-triSpace - APIC - HTTP Post | TRIRIGA Outbound
-triServiceRequest - APIC - HTTP Post | TRIRIGA Outbound
-triProperty - APIC - HTTP Post | TRIRIGA Outbound
-triPeople - APIC - HTTP Post | TRIRIGA Outbound
-triFloor - APIC - HTTP Post | TRIRIGA Outbound
-triBuildingEquipment - APIC - HTTP Post | TRIRIGA Outbound
-triBuilding - APIC - HTTP Post | TRIRIGA Outbound
+Details regarding the TRIRIGA APIs can be found [here](https://github.ibm.com/tririga-connector/apis/blob/master/README.md).
 
  
   </details>
