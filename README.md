@@ -2,21 +2,27 @@
 
 ### Summary
 
-This repository is for a developer looking to sync the databases of Maximo and TRIRIGA using App Connect flows to facilitate. App Connect is used to synchronize records in both Maximo and TRIRIGA. When there is a change on one application, this triggers a request to App Connect which updates or populates the records in the other application.
+Enable automated synchronization of portfolio data between TRIRIGA and Maximo Asset Management systems to integrate asset and facility management operations.
+
+### Description
+
+In this code pattern, learn how to synchronize bi-directional portfolio data of IBM TRIRIGA and IBM Maximo Asset Management using App Connect Designer flows for synchronizing People, Locations, and Assets. Using the provided flows, enable a variety of use cases: from a simple trigger-action integration that updates or populates the records in the other application, to more complex scripted cron jobs that orchestrate these objects into their respective primary system of record.
 
 <img src="/Pics/MX2TRI-Graph.png" >
 
-1. In the above example, when a record is updated in Maximo, it will trigger the flow to synchronize with TRIRIGA. There is also a flow that works in the reverse direction, that works in a similar way.
-2. App Connect sends a request with the updated information through the flow towards the end destination (TRIRIGA).
-3. A JSON Parser sifts through the Request and converts it to an object. 
+1. When a record is updated in Maximo Asset Management, it triggers the flow to synchronize with TRIRIGA. (There is also a flow that works in the reverse direction, that works in a similar way.)
+2. App Connect sends a request with the updated information through the flow towards the target system (TRIRIGA).
+3. A JSON Parser sifts through the request and converts it to an object.
 4. Each object that is returned from the JSON Parser goes through Steps 5-8.
-5. The data from the object is mapped to the corresponding fields in the destination application (TRIRIGA). 
-6. The newly mapped data is sent to the destination application (TRIRIGA) where the record is created or updated.
-7. This record is then validated with the original application (Maximo) via another Post request. 
-8. An ID is either created or updated within the original application (Maximo).
-9. This process is repeated for each object that is present in the original request (Maximo).
+5. The data from the object is mapped to the corresponding fields in the target application (TRIRIGA).
+6. The newly mapped data is sent to the target application (TRIRIGA) where the record is created or updated.
+7. This record is then validated with the original application (Maximo Asset Management) via another Post request.
+8. An ID is either created or updated within the original application (Maximo Asset Management).
+9. Steps 4-8 are repeated for each object that is present in the original request (Maximo Asset Management).
 
 At the end of this process, a Person, Asset, or Location can be sent from Maximo to TRIRIGA and TRIRIGA to Maximo utilizing App Connect.
+
+A detailed breakdown of the specific fields being mapped within each flow can be found in this [Mapping Document](/docs/TRIRIGA_Maximo_Field_Mapping-Final.xlsx)
 
 ## Pre-requisites
 
@@ -244,6 +250,8 @@ Asset | Maximo | TRIRIGA
 Person | [MX2TRI](/docs/MAX2Tririga/PLUSTMXPerson2TRI.yaml) | [TRI2MX](/docs/TRI2Maximo/PLUSTTRIPerson2MX.yaml)
 Asset | [MX2TRI](/docs/MAX2Tririga/PLUSTMXAsset2TRI.yaml) | [TRI2MX](/docs/TRI2Maximo/PLUSTTRIAsset2MX.yaml)
 Location | [MX2TRI](/docs/MAX2Tririga/PLUSTMXLocation2TRI.yaml) | [TRI2MX](/docs/TRI2Maximo/PLUSTTRISpace2MX.yaml)
+
+Make sure to check the [Mapping Document](/docs/TRIRIGA_Maximo_Field_Mapping-Final.xlsx) that the correct fields are being mapped in the selected flow.
 
 
 ## Step 2 - Import the Selected Flow in App Connect
