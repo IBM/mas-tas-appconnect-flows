@@ -202,9 +202,9 @@ Within Maximo, configure your instance to be ready to receive records from TRIRI
 
 Credentials and access to an instance of TRIRIGA are required
 
-Navigate to Tools > Object Migration and import the latest [OM Package](https://github.com/IBM/tririga-api/tree/main/docs/ompackages) containing TRIRIGA APIs.
+Download the latest TRIRIGA APIs OM Package from this [TRIRIGA APIs GitHub Repository](https://github.com/IBM/tririga-api/blob/main/README.md).
  
-Details regarding the TRIRIGA APIs can be found [here](https://github.com/IBM/tririga-api/blob/main/README.md).
+Navigate to Tools > Object Migration and import the OM Package. 
 
  
   </details>
