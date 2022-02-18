@@ -508,28 +508,12 @@ integration:
                     $ref: >-
                       #/block/For each/node-output/Set variable
                       3/response/payload
-                  - variable: testClientPOSTtestclient
-                    $ref: >-
-                      #/block/For each/node-output/testClient POST
-                      testclient/response/payload
-                  - variable: testClientPOSTtestclientMetadata
-                    $ref: >-
-                      #/block/For each/node-output/testClient POST
-                      testclient/response
                   - variable: HTTPInvokemethod
                     $ref: >-
                       #/block/For each/node-output/HTTP Invoke
                       method/response/payload
                   - variable: HTTPInvokemethodMetadata
                     $ref: '#/block/For each/node-output/HTTP Invoke method/response'
-                  - variable: testClientPOSTtestclient3
-                    $ref: >-
-                      #/block/For each/node-output/testClient POST testclient
-                      3/response/payload
-                  - variable: testClientPOSTtestclient3Metadata
-                    $ref: >-
-                      #/block/For each/node-output/testClient POST testclient
-                      3/response
                   - variable: Setvariable
                     $ref: '#/node-output/Set variable/response/payload'
                   - variable: JSONParserParse
@@ -722,14 +706,6 @@ integration:
                     $ref: >-
                       #/block/For each/node-output/Set variable
                       3/response/payload
-                  - variable: testClientPOSTtestclient
-                    $ref: >-
-                      #/block/For each/node-output/testClient POST
-                      testclient/response/payload
-                  - variable: testClientPOSTtestclientMetadata
-                    $ref: >-
-                      #/block/For each/node-output/testClient POST
-                      testclient/response
                   - variable: Setvariable
                     $ref: '#/node-output/Set variable/response/payload'
                   - variable: JSONParserParse

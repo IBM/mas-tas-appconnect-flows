@@ -251,14 +251,6 @@ integration:
                     $ref: >-
                       #/block/For each/node-output/Set variable
                       2/response/payload
-                  - variable: testClientPOSTtestclient
-                    $ref: >-
-                      #/block/For each/node-output/testClient POST
-                      testclient/response/payload
-                  - variable: testClientPOSTtestclientMetadata
-                    $ref: >-
-                      #/block/For each/node-output/testClient POST
-                      testclient/response
                   - variable: HTTPInvokemethod
                     $ref: >-
                       #/block/For each/node-output/HTTP Invoke
@@ -502,14 +494,6 @@ integration:
                     $ref: >-
                       #/block/For each/node-output/Set variable
                       2/response/payload
-                  - variable: testClientPOSTtestclient
-                    $ref: >-
-                      #/block/For each/node-output/testClient POST
-                      testclient/response/payload
-                  - variable: testClientPOSTtestclientMetadata
-                    $ref: >-
-                      #/block/For each/node-output/testClient POST
-                      testclient/response
                   - variable: Setvariable4
                     $ref: '#/node-output/Set variable 4/response/payload'
                   - variable: JSONParserParse
@@ -529,14 +513,6 @@ integration:
                     $ref: >-
                       #/block/For each/node-output/Set variable
                       2/response/payload
-                  - variable: testClientPOSTtestclient
-                    $ref: >-
-                      #/block/For each/node-output/testClient POST
-                      testclient/response/payload
-                  - variable: testClientPOSTtestclientMetadata
-                    $ref: >-
-                      #/block/For each/node-output/testClient POST
-                      testclient/response
                   - variable: HTTPInvokemethod
                     $ref: >-
                       #/block/For each/node-output/HTTP Invoke
