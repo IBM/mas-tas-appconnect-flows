@@ -521,7 +521,7 @@ integration:
                             expression: '$Setvariable3.variable.trilocation '
                         - triresponse:
                             expression: '$HTTPInvokemethodMetadata '
-  name: PLUSTMXLocation2TRI_NEW
+  name: PLUSTMXLocation2TRI
 models:
   mxLocation:
     name: mxLocation

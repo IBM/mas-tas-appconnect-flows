@@ -710,7 +710,7 @@ integration:
                     $ref: '#/node-output/Set variable/response/payload'
                   - variable: JSONParserParse
                     $ref: '#/node-output/JSON Parser Parse/response/payload'
-  name: PLUSTMXAsset2TRI_NEW
+  name: PLUSTMXAsset2TRI
 models:
   triAsset:
     name: triAsset
