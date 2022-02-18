@@ -24,18 +24,11 @@ integration:
             triggers: {}
       type: api-trigger
   action-interfaces:
-    action-interface-1:
-      type: api-action
-      business-object: testclient_model
-      connector-type: UDA.default.openapi.testClient
-      account-name: Account 1
-      actions:
-        testclient: {}
     action-interface-2:
       type: api-action
       business-object: request
       connector-type: http
-      account-name: mxtririgaoxytocin
+      account-name: trimaximo
       actions:
         INVOKE: {}
   assemblies:
@@ -163,14 +156,6 @@ integration:
                     $ref: '#/trigger/payload'
                   - variable: Setvariable
                     $ref: '#/block/For each/node-output/Set variable/response/payload'
-                  - variable: testClientPOSTtestclient
-                    $ref: >-
-                      #/block/For each/node-output/testClient POST
-                      testclient/response/payload
-                  - variable: testClientPOSTtestclientMetadata
-                    $ref: >-
-                      #/block/For each/node-output/testClient POST
-                      testclient/response
                   - variable: HTTPInvokemethod
                     $ref: >-
                       #/block/For each/node-output/HTTP Invoke
@@ -321,39 +306,6 @@ integration:
                               - terminationdate:
                                   template: '{{$Foreachitem."Active End Date"}}'
           - custom-action:
-              name: testClient POST testclient
-              target:
-                $ref: '#/integration/action-interfaces/action-interface-1'
-              action: testclient
-              map:
-                customSchemas:
-                  properties.`body`:
-                    type: object
-                    properties:
-                      fromTririga:
-                        type: object
-                        properties: {}
-                      toMaximo:
-                        type: object
-                        properties: {}
-                mappings:
-                  - body:
-                      mappings:
-                        - fromTririga:
-                            expression: '$Foreachitem '
-                        - toMaximo:
-                            expression: $Setvariable.variable.mxPerson
-                $map: http://ibm.com/appconnect/map/v1
-                input:
-                  - variable: Foreachitem
-                    $ref: '#/block/For each/current-item'
-                  - variable: Request
-                    $ref: '#/trigger/payload'
-                  - variable: Setvariable
-                    $ref: '#/block/For each/node-output/Set variable/response/payload'
-                  - variable: JSONParserParse
-                    $ref: '#/node-output/JSON Parser Parse/response/payload'
-          - custom-action:
               name: HTTP Invoke method
               target:
                 $ref: '#/integration/action-interfaces/action-interface-2'
@@ -391,14 +343,6 @@ integration:
                     $ref: '#/trigger/payload'
                   - variable: Setvariable
                     $ref: '#/block/For each/node-output/Set variable/response/payload'
-                  - variable: testClientPOSTtestclient
-                    $ref: >-
-                      #/block/For each/node-output/testClient POST
-                      testclient/response/payload
-                  - variable: testClientPOSTtestclientMetadata
-                    $ref: >-
-                      #/block/For each/node-output/testClient POST
-                      testclient/response
                   - variable: JSONParserParse
                     $ref: '#/node-output/JSON Parser Parse/response/payload'
           - set-variable:
@@ -412,14 +356,6 @@ integration:
                     $ref: '#/trigger/payload'
                   - variable: Setvariable
                     $ref: '#/block/For each/node-output/Set variable/response/payload'
-                  - variable: testClientPOSTtestclient
-                    $ref: >-
-                      #/block/For each/node-output/testClient POST
-                      testclient/response/payload
-                  - variable: testClientPOSTtestclientMetadata
-                    $ref: >-
-                      #/block/For each/node-output/testClient POST
-                      testclient/response
                   - variable: HTTPInvokemethod
                     $ref: >-
                       #/block/For each/node-output/HTTP Invoke
@@ -450,7 +386,7 @@ integration:
                                   expression: '$Setvariable.variable.mxPerson '
                               - mxResponse:
                                   expression: '$HTTPInvokemethodMetadata '
-  name: PLUSTTRIPerson2MX
+  name: PLUSTTRIPerson2MX_NEW
 models:
   mxPerson:
     name: mxPerson

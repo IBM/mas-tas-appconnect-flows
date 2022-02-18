@@ -28,16 +28,9 @@ integration:
       type: api-action
       business-object: request
       connector-type: http
-      account-name: mxtririgaoxytocin
+      account-name: trimaximo
       actions:
         INVOKE: {}
-    action-interface-2:
-      type: api-action
-      business-object: testclient_model
-      connector-type: UDA.default.openapi.testClient
-      account-name: Account 1
-      actions:
-        testclient: {}
   assemblies:
     assembly-1:
       assembly:
@@ -151,14 +144,6 @@ integration:
                     $ref: '#/trigger/payload'
                   - variable: Setvariable
                     $ref: '#/block/For each/node-output/Set variable/response/payload'
-                  - variable: testClientPOSTtestclient
-                    $ref: >-
-                      #/block/For each/node-output/testClient POST
-                      testclient/response/payload
-                  - variable: testClientPOSTtestclientMetadata
-                    $ref: >-
-                      #/block/For each/node-output/testClient POST
-                      testclient/response
                   - variable: HTTPInvokemethod
                     $ref: >-
                       #/block/For each/node-output/HTTP Invoke
@@ -265,36 +250,6 @@ integration:
                               - specification:
                                   template: Maximo-Spec
           - custom-action:
-              name: testClient POST testclient
-              target:
-                $ref: '#/integration/action-interfaces/action-interface-2'
-              action: testclient
-              map:
-                customSchemas:
-                  properties.`body`:
-                    type: object
-                    properties:
-                      dataSent:
-                        type: object
-                        properties: {}
-                mappings:
-                  - body:
-                      mappings:
-                        - dataSent:
-                            expression: '$Setvariable '
-                $map: http://ibm.com/appconnect/map/v1
-                input:
-                  - variable: Foreachitem
-                    $ref: '#/block/For each/current-item'
-                  - variable: Request
-                    $ref: '#/trigger/payload'
-                  - variable: Setvariable
-                    $ref: '#/block/For each/node-output/Set variable/response/payload'
-                  - variable: Setvariable3
-                    $ref: '#/node-output/Set variable 3/response/payload'
-                  - variable: JSONParserParse
-                    $ref: '#/node-output/JSON Parser Parse/response/payload'
-          - custom-action:
               name: HTTP Invoke method
               target:
                 $ref: '#/integration/action-interfaces/action-interface-1'
@@ -332,14 +287,6 @@ integration:
                     $ref: '#/trigger/payload'
                   - variable: Setvariable
                     $ref: '#/block/For each/node-output/Set variable/response/payload'
-                  - variable: testClientPOSTtestclient
-                    $ref: >-
-                      #/block/For each/node-output/testClient POST
-                      testclient/response/payload
-                  - variable: testClientPOSTtestclientMetadata
-                    $ref: >-
-                      #/block/For each/node-output/testClient POST
-                      testclient/response
                   - variable: JSONParserParse
                     $ref: '#/node-output/JSON Parser Parse/response/payload'
           - set-variable:
@@ -353,14 +300,6 @@ integration:
                     $ref: '#/trigger/payload'
                   - variable: Setvariable
                     $ref: '#/block/For each/node-output/Set variable/response/payload'
-                  - variable: testClientPOSTtestclient
-                    $ref: >-
-                      #/block/For each/node-output/testClient POST
-                      testclient/response/payload
-                  - variable: testClientPOSTtestclientMetadata
-                    $ref: >-
-                      #/block/For each/node-output/testClient POST
-                      testclient/response
                   - variable: HTTPInvokemethod
                     $ref: >-
                       #/block/For each/node-output/HTTP Invoke
@@ -391,7 +330,7 @@ integration:
                                   expression: '$Setvariable.variable.mxAsset '
                               - mxResponse:
                                   expression: '$HTTPInvokemethodMetadata '
-  name: PLUSTTRIAsset2MX
+  name: PLUSTTRIAsset2MX_NEW
 models:
   mxAsset:
     name: mxAsset
