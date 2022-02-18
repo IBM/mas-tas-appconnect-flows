@@ -386,7 +386,7 @@ integration:
                                   expression: '$Setvariable.variable.mxPerson '
                               - mxResponse:
                                   expression: '$HTTPInvokemethodMetadata '
-  name: PLUSTTRIPerson2MX_NEW
+  name: PLUSTTRIPerson2MX
 models:
   mxPerson:
     name: mxPerson

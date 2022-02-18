@@ -330,7 +330,7 @@ integration:
                                   expression: '$Setvariable.variable.mxAsset '
                               - mxResponse:
                                   expression: '$HTTPInvokemethodMetadata '
-  name: PLUSTTRIAsset2MX_NEW
+  name: PLUSTTRIAsset2MX
 models:
   mxAsset:
     name: mxAsset

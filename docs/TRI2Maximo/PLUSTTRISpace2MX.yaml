@@ -391,7 +391,7 @@ integration:
                                   expression: '$Setvariable.variable.mxlocation '
                               - mxResponse:
                                   expression: '$HTTPInvokemethodMetadata '
-  name: PLUSTTRISpace2MX_NEW
+  name: PLUSTTRISpace2MX
 models:
   mxLocation:
     name: mxLocation
