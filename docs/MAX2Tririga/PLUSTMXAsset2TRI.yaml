@@ -24,13 +24,6 @@ integration:
             triggers: {}
       type: api-trigger
   action-interfaces:
-    action-interface-1:
-      type: api-action
-      business-object: testclient_model
-      connector-type: UDA.default.openapi.testClient
-      account-name: Account 1
-      actions:
-        testclient: {}
     action-interface-3:
       type: api-action
       business-object: request
@@ -38,13 +31,6 @@ integration:
       account-name: mxtririga
       actions:
         INVOKE: {}
-    action-interface-4:
-      type: api-action
-      business-object: testclient_model
-      connector-type: UDA.default.openapi.testClient
-      account-name: Account 1
-      actions:
-        testclient: {}
   assemblies:
     assembly-1:
       assembly:
@@ -694,47 +680,6 @@ integration:
                               $sift($applyNS($Setvariable2.variable.triAssetPayload),
                               function($v){$boolean($v)});)
           - custom-action:
-              name: testClient POST testclient
-              target:
-                $ref: '#/integration/action-interfaces/action-interface-1'
-              action: testclient
-              map:
-                customSchemas:
-                  properties.`body`:
-                    type: object
-                    properties:
-                      fromMaximo:
-                        type: object
-                        properties: {}
-                      toTririga:
-                        type: object
-                        properties: {}
-                mappings:
-                  - body:
-                      mappings:
-                        - fromMaximo:
-                            expression: '$Foreachitem '
-                        - toTririga:
-                            expression: '$Setvariable3.variable.triAssetWithNS '
-                $map: http://ibm.com/appconnect/map/v1
-                input:
-                  - variable: Foreachitem
-                    $ref: '#/block/For each/current-item'
-                  - variable: Request
-                    $ref: '#/trigger/payload'
-                  - variable: Setvariable2
-                    $ref: >-
-                      #/block/For each/node-output/Set variable
-                      2/response/payload
-                  - variable: Setvariable3
-                    $ref: >-
-                      #/block/For each/node-output/Set variable
-                      3/response/payload
-                  - variable: Setvariable
-                    $ref: '#/node-output/Set variable/response/payload'
-                  - variable: JSONParserParse
-                    $ref: '#/node-output/JSON Parser Parse/response/payload'
-          - custom-action:
               name: HTTP Invoke method
               target:
                 $ref: '#/integration/action-interfaces/action-interface-3'
@@ -789,57 +734,7 @@ integration:
                     $ref: '#/node-output/Set variable/response/payload'
                   - variable: JSONParserParse
                     $ref: '#/node-output/JSON Parser Parse/response/payload'
-          - custom-action:
-              name: testClient POST testclient 3
-              target:
-                $ref: '#/integration/action-interfaces/action-interface-4'
-              action: testclient
-              map:
-                customSchemas:
-                  properties.`body`:
-                    type: object
-                    properties:
-                      TRIresponse:
-                        type: object
-                        properties: {}
-                mappings:
-                  - body:
-                      mappings:
-                        - TRIresponse:
-                            expression: '$HTTPInvokemethodMetadata '
-                $map: http://ibm.com/appconnect/map/v1
-                input:
-                  - variable: Foreachitem
-                    $ref: '#/block/For each/current-item'
-                  - variable: Request
-                    $ref: '#/trigger/payload'
-                  - variable: Setvariable2
-                    $ref: >-
-                      #/block/For each/node-output/Set variable
-                      2/response/payload
-                  - variable: Setvariable3
-                    $ref: >-
-                      #/block/For each/node-output/Set variable
-                      3/response/payload
-                  - variable: testClientPOSTtestclient
-                    $ref: >-
-                      #/block/For each/node-output/testClient POST
-                      testclient/response/payload
-                  - variable: testClientPOSTtestclientMetadata
-                    $ref: >-
-                      #/block/For each/node-output/testClient POST
-                      testclient/response
-                  - variable: HTTPInvokemethod
-                    $ref: >-
-                      #/block/For each/node-output/HTTP Invoke
-                      method/response/payload
-                  - variable: HTTPInvokemethodMetadata
-                    $ref: '#/block/For each/node-output/HTTP Invoke method/response'
-                  - variable: Setvariable
-                    $ref: '#/node-output/Set variable/response/payload'
-                  - variable: JSONParserParse
-                    $ref: '#/node-output/JSON Parser Parse/response/payload'
-  name: PLUSTMXAsset2TRI
+  name: PLUSTMXAsset2TRI_NEW
 models:
   triAsset:
     name: triAsset

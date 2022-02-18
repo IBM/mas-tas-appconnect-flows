@@ -24,13 +24,6 @@ integration:
               synclocation: synclocationTriLocation
       type: api-trigger
   action-interfaces:
-    action-interface-1:
-      type: api-action
-      business-object: testclient_model
-      connector-type: UDA.default.openapi.testClient
-      account-name: Account 1
-      actions:
-        testclient: {}
     action-interface-2:
       type: api-action
       business-object: request
@@ -446,33 +439,6 @@ integration:
                               : $v            })[] : []    };   
                               $sift($applyNS($Setvariable2.variable),function($v){$boolean($v)});)
           - custom-action:
-              name: testClient POST testclient
-              target:
-                $ref: '#/integration/action-interfaces/action-interface-1'
-              action: testclient
-              map:
-                mappings:
-                  - body:
-                      expression: '$Setvariable3.variable.trilocation '
-                $map: http://ibm.com/appconnect/map/v1
-                input:
-                  - variable: Foreachitem
-                    $ref: '#/block/For each/current-item'
-                  - variable: Request
-                    $ref: '#/trigger/payload'
-                  - variable: Setvariable2
-                    $ref: >-
-                      #/block/For each/node-output/Set variable
-                      2/response/payload
-                  - variable: Setvariable3
-                    $ref: >-
-                      #/block/For each/node-output/Set variable
-                      3/response/payload
-                  - variable: Setvariable
-                    $ref: '#/node-output/Set variable/response/payload'
-                  - variable: JSONParserParse
-                    $ref: '#/node-output/JSON Parser Parse/response/payload'
-          - custom-action:
               name: HTTP Invoke method
               target:
                 $ref: '#/integration/action-interfaces/action-interface-2'
@@ -579,7 +545,7 @@ integration:
                             expression: '$Setvariable3.variable.trilocation '
                         - triresponse:
                             expression: '$HTTPInvokemethodMetadata '
-  name: PLUSTMXLocation2TRI
+  name: PLUSTMXLocation2TRI_NEW
 models:
   mxLocation:
     name: mxLocation
