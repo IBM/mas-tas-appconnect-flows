@@ -35,6 +35,32 @@ integration:
     assembly-1:
       assembly:
         execute:
+          - set-variable:
+              name: Set variable 3
+              map:
+                $map: http://ibm.com/appconnect/map/v1
+                customSchemas:
+                  properties.`variable`:
+                    type: object
+                    properties:
+                      maximoorg:
+                        type: string
+                      maximosite:
+                        type: string
+                input:
+                  - variable: Request
+                    $ref: '#/trigger/payload'
+                  - variable: api
+                    $ref: '#/trigger/api/parameters'
+                  - variable: flowDetails
+                    $ref: '#/flowDetails'
+                mappings:
+                  - variable:
+                      mappings:
+                        - maximoorg:
+                            template: TRIRIGA
+                        - maximosite:
+                            template: TRIMAIN
           - parse:
               name: JSON Parser Parse
               parse-format: json
@@ -43,26 +69,34 @@ integration:
                 input:
                   - variable: Request
                     $ref: '#/trigger/payload'
-              sample-data: |
+                  - variable: api
+                    $ref: '#/trigger/api/parameters'
+                  - variable: Setvariable3
+                    $ref: '#/node-output/Set variable 3/response/payload'
+                  - variable: flowDetails
+                    $ref: '#/flowDetails'
+              sample-data: |-
                 {
                   "data": [
                     {
-                      "Form Name": "triEmployee",
-                      "Active End Date": "2021-03-31T00:00:00-08:00",
-                      "Organization Name": "IBM",
-                      "Address": "19 Main St",
-                      "boId": 106402,
-                      "First Name": "John",
-                      "Location Name": "",
-                      "Work Phone": "12345",
-                      "City": "Geography",
-                      "State/Province": "Nevada",
-                      "eMail": "abc@sample.com",
-                      "recordId": 135499665,
-                      "Zip/Postal Code": "78231",
-                      "Active Start Date": "1986-04-20T00:00:00-08:00",
-                      "Country": "USA",
-                      "Last Name": "Smith"
+                   "Active End Date": "",
+                   "Active Start Date": "2021-09-01",
+                   "Address": "Beverely Hills, 402, Lane 2.",
+                   "City": "BOSTON",
+                   "Country": "USA",
+                   "First Name": "Patrick",
+                   "Form Name": "triEmployee",
+                   "HR ID": "TRIMX01",
+                   "Last Name": "Grills",
+                   "Location Name": "",
+                   "Organization Name": "Maximo Org",
+                   "State/Province": "MA",
+                   "Work Phone": "77667767",
+                   "Zip/Postal Code": "20301",
+                   "boId": 106402,
+                   "eMail": "patrick@test.com",
+                   "recordId": 135522165,
+                   "Status":"Active"
                     }
                   ],
                   "continueToken": "",
@@ -77,6 +111,7 @@ integration:
                     "Form Name",
                     "Last Name",
                     "State/Province",
+                    "Status",
                     "Work Phone",
                     "Zip/Postal Code",
                     "Organization Name",
@@ -93,37 +128,41 @@ integration:
                     items:
                       type: object
                       properties:
-                        Form Name:
-                          type: string
                         Active End Date:
                           type: string
-                        Organization Name:
+                        Active Start Date:
                           type: string
                         Address:
                           type: string
-                        boId:
-                          type: number
+                        City:
+                          type: string
+                        Country:
+                          type: string
                         First Name:
+                          type: string
+                        Form Name:
+                          type: string
+                        HR ID:
+                          type: string
+                        Last Name:
                           type: string
                         Location Name:
                           type: string
-                        Work Phone:
-                          type: string
-                        City:
+                        Organization Name:
                           type: string
                         State/Province:
                           type: string
+                        Work Phone:
+                          type: string
+                        Zip/Postal Code:
+                          type: string
+                        boId:
+                          type: number
                         eMail:
                           type: string
                         recordId:
                           type: number
-                        Zip/Postal Code:
-                          type: string
-                        Active Start Date:
-                          type: string
-                        Country:
-                          type: string
-                        Last Name:
+                        Status:
                           type: string
                   continueToken:
                     type: string
@@ -143,8 +182,14 @@ integration:
                 input:
                   - variable: Request
                     $ref: '#/trigger/payload'
+                  - variable: api
+                    $ref: '#/trigger/api/parameters'
+                  - variable: Setvariable3
+                    $ref: '#/node-output/Set variable 3/response/payload'
                   - variable: JSONParserParse
                     $ref: '#/node-output/JSON Parser Parse/response/payload'
+                  - variable: flowDetails
+                    $ref: '#/flowDetails'
               mode: parallel
               continue-on-error: false
               map:
@@ -203,10 +248,16 @@ integration:
                   input:
                     - variable: Request
                       $ref: '#/trigger/payload'
+                    - variable: api
+                      $ref: '#/trigger/api/parameters'
+                    - variable: Setvariable3
+                      $ref: '#/node-output/Set variable 3/response/payload'
                     - variable: JSONParserParse
                       $ref: '#/node-output/JSON Parser Parse/response/payload'
                     - variable: Foreach
                       $ref: '#/node-output/For each/response/payload'
+                    - variable: flowDetails
+                      $ref: '#/flowDetails'
     assembly-2:
       assembly:
         execute:
@@ -219,8 +270,14 @@ integration:
                     $ref: '#/block/For each/current-item'
                   - variable: Request
                     $ref: '#/trigger/payload'
+                  - variable: api
+                    $ref: '#/trigger/api/parameters'
+                  - variable: Setvariable3
+                    $ref: '#/node-output/Set variable 3/response/payload'
                   - variable: JSONParserParse
                     $ref: '#/node-output/JSON Parser Parse/response/payload'
+                  - variable: flowDetails
+                    $ref: '#/flowDetails'
                 customSchemas:
                   properties.`variable`:
                     type: object
@@ -264,11 +321,17 @@ integration:
                             type: string
                           personid:
                             type: string
+                          status:
+                            type: string
+                          _action:
+                            type: string
                 mappings:
                   - variable:
                       mappings:
                         - mxPerson:
                             mappings:
+                              - _action:
+                                  template: AddChange
                               - addressline1:
                                   template: '{{$Foreachitem.Address}}'
                               - city:
@@ -289,11 +352,11 @@ integration:
                               - lastname:
                                   template: '{{$Foreachitem."Last Name"}}'
                               - locationorg:
-                                  template: '{{$Foreachitem."Organization Name"}}'
+                                  template: '{{$Setvariable3.variable.maximoorg}}'
                               - locationsite:
-                                  template: '{{$Foreachitem."Location Name"}}'
+                                  template: '{{$Setvariable3.variable.maximosite}}'
                               - personid:
-                                  template: '{{$Foreachitem.recordId}}'
+                                  template: '{{$Foreachitem."HR ID"}}'
                               - phone:
                                   expression: >-
                                     $Foreachitem."Work Phone" != "" ?
@@ -303,6 +366,9 @@ integration:
                                   template: '{{$Foreachitem."Zip/Postal Code"}}'
                               - stateprovince:
                                   template: '{{$Foreachitem."State/Province"}}'
+                              - status:
+                                  template: >-
+                                    {{$Foreachitem.Status="Retired"?"INACTIVE":"ACTIVE"}}
                               - terminationdate:
                                   template: '{{$Foreachitem."Active End Date"}}'
           - custom-action:
@@ -333,18 +399,23 @@ integration:
                         - x-method-override:
                             template: SYNC
                   - url:
-                      template: >-
-                        http://oxytocin1.fyre.ibm.com:9080/meaweb/esqueue/PLUSTTRIRIGA/PLUSTMXPERSONEnService
+                      template: '{{$api.mxUrl}}'
                 $map: http://ibm.com/appconnect/map/v1
                 input:
                   - variable: Foreachitem
                     $ref: '#/block/For each/current-item'
                   - variable: Request
                     $ref: '#/trigger/payload'
+                  - variable: api
+                    $ref: '#/trigger/api/parameters'
                   - variable: Setvariable
                     $ref: '#/block/For each/node-output/Set variable/response/payload'
+                  - variable: Setvariable3
+                    $ref: '#/node-output/Set variable 3/response/payload'
                   - variable: JSONParserParse
                     $ref: '#/node-output/JSON Parser Parse/response/payload'
+                  - variable: flowDetails
+                    $ref: '#/flowDetails'
           - set-variable:
               name: Set variable 2
               map:
@@ -354,6 +425,8 @@ integration:
                     $ref: '#/block/For each/current-item'
                   - variable: Request
                     $ref: '#/trigger/payload'
+                  - variable: api
+                    $ref: '#/trigger/api/parameters'
                   - variable: Setvariable
                     $ref: '#/block/For each/node-output/Set variable/response/payload'
                   - variable: HTTPInvokemethod
@@ -362,8 +435,12 @@ integration:
                       method/response/payload
                   - variable: HTTPInvokemethodMetadata
                     $ref: '#/block/For each/node-output/HTTP Invoke method/response'
+                  - variable: Setvariable3
+                    $ref: '#/node-output/Set variable 3/response/payload'
                   - variable: JSONParserParse
                     $ref: '#/node-output/JSON Parser Parse/response/payload'
+                  - variable: flowDetails
+                    $ref: '#/flowDetails'
                 customSchemas:
                   properties.`variable`:
                     type: object
@@ -415,6 +492,10 @@ models:
             type: triPerson
             http:
               source: body
+          - arg: mxUrl
+            type: string
+            http:
+              source: query
         returns:
           arg: data
           type: mxPerson

@@ -42,6 +42,10 @@ integration:
                 input:
                   - variable: Request
                     $ref: '#/trigger/payload'
+                  - variable: api
+                    $ref: '#/trigger/api/parameters'
+                  - variable: flowDetails
+                    $ref: '#/flowDetails'
                 customSchemas:
                   properties.`variable`:
                     type: object
@@ -69,8 +73,12 @@ integration:
                 input:
                   - variable: Request
                     $ref: '#/trigger/payload'
+                  - variable: api
+                    $ref: '#/trigger/api/parameters'
                   - variable: Setvariable3
                     $ref: '#/node-output/Set variable 3/response/payload'
+                  - variable: flowDetails
+                    $ref: '#/flowDetails'
               sample-data: |-
                 {
                    "data":[
@@ -184,8 +192,14 @@ integration:
                 input:
                   - variable: Request
                     $ref: '#/trigger/payload'
+                  - variable: api
+                    $ref: '#/trigger/api/parameters'
+                  - variable: Setvariable3
+                    $ref: '#/node-output/Set variable 3/response/payload'
                   - variable: JSONParserParse
                     $ref: '#/node-output/JSON Parser Parse/response/payload'
+                  - variable: flowDetails
+                    $ref: '#/flowDetails'
               mode: parallel
               continue-on-error: false
               map:
@@ -252,6 +266,39 @@ integration:
       assembly:
         execute:
           - set-variable:
+              name: Set variable 4
+              map:
+                $map: http://ibm.com/appconnect/map/v1
+                customSchemas:
+                  properties.`variable`:
+                    type: object
+                    properties:
+                      Heirarchypath:
+                        type: object
+                        properties: {}
+                input:
+                  - variable: Foreachitem
+                    $ref: '#/block/For each/current-item'
+                  - variable: Request
+                    $ref: '#/trigger/payload'
+                  - variable: api
+                    $ref: '#/trigger/api/parameters'
+                  - variable: Setvariable3
+                    $ref: '#/node-output/Set variable 3/response/payload'
+                  - variable: JSONParserParse
+                    $ref: '#/node-output/JSON Parser Parse/response/payload'
+                  - variable: flowDetails
+                    $ref: '#/flowDetails'
+                mappings:
+                  - variable:
+                      mappings:
+                        - Heirarchypath:
+                            expression: >-
+                              (    $Length:=$length($Foreachitem."Hierarchy
+                              Path")-($length($Foreachitem.Name));   
+                              $str:=$substring($Foreachitem."Hierarchy
+                              Path",0,$Length-1))
+          - set-variable:
               name: Set variable
               map:
                 $map: http://ibm.com/appconnect/map/v1
@@ -260,6 +307,12 @@ integration:
                     $ref: '#/block/For each/current-item'
                   - variable: Request
                     $ref: '#/trigger/payload'
+                  - variable: api
+                    $ref: '#/trigger/api/parameters'
+                  - variable: Setvariable4
+                    $ref: >-
+                      #/block/For each/node-output/Set variable
+                      4/response/payload
                   - variable: Setvariable3
                     $ref: '#/node-output/Set variable 3/response/payload'
                   - variable: JSONParserParse
@@ -287,13 +340,21 @@ integration:
                             type: string
                           type:
                             type: string
+                          externalrefid:
+                            type: string
+                          _action:
+                            type: string
                 mappings:
                   - variable:
                       mappings:
                         - mxlocation:
                             mappings:
+                              - _action:
+                                  template: AddChange
                               - description:
-                                  template: '{{$Foreachitem.Description}}'
+                                  template: '{{$Foreachitem.Name}}'
+                              - externalrefid:
+                                  template: '{{$Foreachitem.recordId}}'
                               - location:
                                   template: '{{$Foreachitem.ID}}'
                               - orgid:
@@ -301,11 +362,13 @@ integration:
                               - siteid:
                                   template: '{{$Setvariable3.variable.maximositeid}}'
                               - status:
-                                  template: '{{$uppercase($Foreachitem.Status)}}'
+                                  template: >-
+                                    {{$uppercase($Foreachitem.Status)="RETIRED"?"INACTIVE":$uppercase($Foreachitem.Status)}}
                               - triparentlocationtx:
-                                  template: '{{$Foreachitem."Parent Floor"}}'
+                                  template: >-
+                                    {{$string($Setvariable4.variable.Heirarchypath)}}
                               - trispaceclassificationtx:
-                                  template: '{{$Foreachitem."Current Use Space Class"}}'
+                                  template: '{{$Foreachitem."Current Use Space Path"}}'
                               - type:
                                   template: '{{$Setvariable3.variable.locationtype}}'
           - custom-action:
@@ -336,20 +399,27 @@ integration:
                         - x-method-override:
                             template: SYNC
                   - url:
-                      template: >-
-                        http://oxytocin1.fyre.ibm.com:9080/meaweb/esqueue/PLUSTTRIRIGA/PLUSTMXOPERLOCEnService
+                      template: '{{$api.mxUrl}}'
                 $map: http://ibm.com/appconnect/map/v1
                 input:
                   - variable: Foreachitem
                     $ref: '#/block/For each/current-item'
                   - variable: Request
                     $ref: '#/trigger/payload'
+                  - variable: api
+                    $ref: '#/trigger/api/parameters'
+                  - variable: Setvariable4
+                    $ref: >-
+                      #/block/For each/node-output/Set variable
+                      4/response/payload
                   - variable: Setvariable
                     $ref: '#/block/For each/node-output/Set variable/response/payload'
                   - variable: Setvariable3
                     $ref: '#/node-output/Set variable 3/response/payload'
                   - variable: JSONParserParse
                     $ref: '#/node-output/JSON Parser Parse/response/payload'
+                  - variable: flowDetails
+                    $ref: '#/flowDetails'
           - set-variable:
               name: Set variable 2
               map:
@@ -359,6 +429,12 @@ integration:
                     $ref: '#/block/For each/current-item'
                   - variable: Request
                     $ref: '#/trigger/payload'
+                  - variable: api
+                    $ref: '#/trigger/api/parameters'
+                  - variable: Setvariable4
+                    $ref: >-
+                      #/block/For each/node-output/Set variable
+                      4/response/payload
                   - variable: Setvariable
                     $ref: '#/block/For each/node-output/Set variable/response/payload'
                   - variable: HTTPInvokemethod
@@ -367,8 +443,12 @@ integration:
                       method/response/payload
                   - variable: HTTPInvokemethodMetadata
                     $ref: '#/block/For each/node-output/HTTP Invoke method/response'
+                  - variable: Setvariable3
+                    $ref: '#/node-output/Set variable 3/response/payload'
                   - variable: JSONParserParse
                     $ref: '#/node-output/JSON Parser Parse/response/payload'
+                  - variable: flowDetails
+                    $ref: '#/flowDetails'
                 customSchemas:
                   properties.`variable`:
                     type: object
@@ -420,6 +500,10 @@ models:
             type: triSpace
             http:
               source: body
+          - arg: mxUrl
+            type: string
+            http:
+              source: query
         returns:
           arg: data
           type: mxLocation

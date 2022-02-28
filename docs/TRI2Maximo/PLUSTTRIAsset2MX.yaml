@@ -43,6 +43,10 @@ integration:
                 input:
                   - variable: Request
                     $ref: '#/trigger/payload'
+                  - variable: api
+                    $ref: '#/trigger/api/parameters'
+                  - variable: flowDetails
+                    $ref: '#/flowDetails'
               sample-data: |-
                 {
                    "data":[
@@ -59,6 +63,8 @@ integration:
                          "Primary Location":"\\Locations\\Property 08\\Bldg 07\\Floor 15\\Space 01",
                          "Reservable":"FALSE",
                          "ID":"001",
+                         "Status":"Retired",
+                         "In Service Date":"08/31/2019",
                          "Bar Code Entry":"as-4567"
                       }
                    ],
@@ -68,6 +74,7 @@ integration:
                       "Name",
                       "Description",
                       "Bar Code Entry",
+                      "Status",
                       "Reservable",
                       "Serial Number",
                       "Condition",
@@ -111,6 +118,10 @@ integration:
                           type: string
                         ID:
                           type: string
+                        Status:
+                          type: string
+                        In Service Date:
+                          type: string
                         Bar Code Entry:
                           type: string
                   continueToken:
@@ -122,6 +133,34 @@ integration:
                   totalRows:
                     type: number
                 title: Parsed JSON
+          - set-variable:
+              name: Set variable 3
+              map:
+                $map: http://ibm.com/appconnect/map/v1
+                customSchemas:
+                  properties.`variable`:
+                    type: object
+                    properties:
+                      maximoorg:
+                        type: string
+                      maximosite:
+                        type: string
+                input:
+                  - variable: Request
+                    $ref: '#/trigger/payload'
+                  - variable: api
+                    $ref: '#/trigger/api/parameters'
+                  - variable: JSONParserParse
+                    $ref: '#/node-output/JSON Parser Parse/response/payload'
+                  - variable: flowDetails
+                    $ref: '#/flowDetails'
+                mappings:
+                  - variable:
+                      mappings:
+                        - maximoorg:
+                            template: TRIRIGA
+                        - maximosite:
+                            template: TRIMAIN
           - for-each:
               name: For each
               assembly:
@@ -131,8 +170,14 @@ integration:
                 input:
                   - variable: Request
                     $ref: '#/trigger/payload'
+                  - variable: api
+                    $ref: '#/trigger/api/parameters'
                   - variable: JSONParserParse
                     $ref: '#/node-output/JSON Parser Parse/response/payload'
+                  - variable: Setvariable3
+                    $ref: '#/node-output/Set variable 3/response/payload'
+                  - variable: flowDetails
+                    $ref: '#/flowDetails'
               mode: parallel
               continue-on-error: false
               map:
@@ -142,6 +187,8 @@ integration:
                     $ref: '#/block/For each/current-item'
                   - variable: Request
                     $ref: '#/trigger/payload'
+                  - variable: api
+                    $ref: '#/trigger/api/parameters'
                   - variable: Setvariable
                     $ref: '#/block/For each/node-output/Set variable/response/payload'
                   - variable: HTTPInvokemethod
@@ -156,6 +203,10 @@ integration:
                       2/response/payload
                   - variable: JSONParserParse
                     $ref: '#/node-output/JSON Parser Parse/response/payload'
+                  - variable: Setvariable3
+                    $ref: '#/node-output/Set variable 3/response/payload'
+                  - variable: flowDetails
+                    $ref: '#/flowDetails'
                 customSchemas:
                   properties.`output`:
                     type: object
@@ -191,10 +242,16 @@ integration:
                   input:
                     - variable: Request
                       $ref: '#/trigger/payload'
+                    - variable: api
+                      $ref: '#/trigger/api/parameters'
                     - variable: JSONParserParse
                       $ref: '#/node-output/JSON Parser Parse/response/payload'
+                    - variable: Setvariable3
+                      $ref: '#/node-output/Set variable 3/response/payload'
                     - variable: Foreach
                       $ref: '#/node-output/For each/response/payload'
+                    - variable: flowDetails
+                      $ref: '#/flowDetails'
     assembly-2:
       assembly:
         execute:
@@ -207,8 +264,14 @@ integration:
                     $ref: '#/block/For each/current-item'
                   - variable: Request
                     $ref: '#/trigger/payload'
+                  - variable: api
+                    $ref: '#/trigger/api/parameters'
                   - variable: JSONParserParse
                     $ref: '#/node-output/JSON Parser Parse/response/payload'
+                  - variable: Setvariable3
+                    $ref: '#/node-output/Set variable 3/response/payload'
+                  - variable: flowDetails
+                    $ref: '#/flowDetails'
                 customSchemas:
                   properties.`variable`:
                     type: object
@@ -230,25 +293,47 @@ integration:
                             type: string
                           siteid:
                             type: string
+                          externalrefid:
+                            type: string
+                          _action:
+                            type: string
+                          _id:
+                            type: string
+                          status:
+                            type: string
+                          installdate:
+                            type: string
                 mappings:
                   - variable:
                       mappings:
                         - mxAsset:
                             mappings:
+                              - _action:
+                                  template: AddChange
+                              - _id:
+                                  template: '{{$Foreachitem.ID}}'
                               - assetnum:
                                   template: '{{$Foreachitem.ID}}'
                               - description:
-                                  template: '{{$Foreachitem.Description}}'
+                                  template: '{{$Foreachitem.Name}}'
+                              - externalrefid:
+                                  template: '{{$Foreachitem.recordId}}'
+                              - installdate:
+                                  template: '{{$Foreachitem."In Service Date"}}'
                               - orgid:
-                                  template: TRIRIGA
+                                  template: '{{$Setvariable3.variable.maximoorg}}'
                               - priority:
                                   template: '{{$Foreachitem."Maintenance Priority"}}'
                               - serialnum:
                                   template: '{{$Foreachitem."Serial Number"}}'
                               - siteid:
-                                  template: TRIMAIN
+                                  template: '{{$Setvariable3.variable.maximosite}}'
                               - specification:
                                   template: Maximo-Spec
+                              - status:
+                                  template: >-
+                                    {{$Foreachitem.Condition in
+                                    ["Excellent","Good","Fair"]?"ACTIVE":"INACTIVE"}}
           - custom-action:
               name: HTTP Invoke method
               target:
@@ -277,18 +362,23 @@ integration:
                         - x-method-override:
                             template: SYNC
                   - url:
-                      template: >-
-                        http://oxytocin1.fyre.ibm.com:9080/meaweb/esqueue/PLUSTTRIRIGA/PLUSTMXASSETEnService
+                      template: '{{$api.mxUrl}}'
                 $map: http://ibm.com/appconnect/map/v1
                 input:
                   - variable: Foreachitem
                     $ref: '#/block/For each/current-item'
                   - variable: Request
                     $ref: '#/trigger/payload'
+                  - variable: api
+                    $ref: '#/trigger/api/parameters'
                   - variable: Setvariable
                     $ref: '#/block/For each/node-output/Set variable/response/payload'
                   - variable: JSONParserParse
                     $ref: '#/node-output/JSON Parser Parse/response/payload'
+                  - variable: Setvariable3
+                    $ref: '#/node-output/Set variable 3/response/payload'
+                  - variable: flowDetails
+                    $ref: '#/flowDetails'
           - set-variable:
               name: Set variable 2
               map:
@@ -298,6 +388,8 @@ integration:
                     $ref: '#/block/For each/current-item'
                   - variable: Request
                     $ref: '#/trigger/payload'
+                  - variable: api
+                    $ref: '#/trigger/api/parameters'
                   - variable: Setvariable
                     $ref: '#/block/For each/node-output/Set variable/response/payload'
                   - variable: HTTPInvokemethod
@@ -308,6 +400,10 @@ integration:
                     $ref: '#/block/For each/node-output/HTTP Invoke method/response'
                   - variable: JSONParserParse
                     $ref: '#/node-output/JSON Parser Parse/response/payload'
+                  - variable: Setvariable3
+                    $ref: '#/node-output/Set variable 3/response/payload'
+                  - variable: flowDetails
+                    $ref: '#/flowDetails'
                 customSchemas:
                   properties.`variable`:
                     type: object
@@ -359,6 +455,10 @@ models:
             type: triAsset
             http:
               source: body
+          - arg: mxUrl
+            type: string
+            http:
+              source: query
         returns:
           arg: data
           type: mxAsset
