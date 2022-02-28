@@ -31,6 +31,13 @@ integration:
       account-name: mxtririga
       actions:
         INVOKE: {}
+    action-interface-4:
+      type: api-action
+      business-object: request
+      connector-type: http
+      account-name: PLUSTTogas-SecGW
+      actions:
+        INVOKE: {}
   assemblies:
     assembly-1:
       assembly:
@@ -42,6 +49,10 @@ integration:
                 input:
                   - variable: Request
                     $ref: '#/trigger/payload'
+                  - variable: api
+                    $ref: '#/trigger/api/parameters'
+                  - variable: flowDetails
+                    $ref: '#/flowDetails'
                 customSchemas:
                   properties.`variable`:
                     type: object
@@ -66,8 +77,12 @@ integration:
                 input:
                   - variable: Request
                     $ref: '#/trigger/payload'
+                  - variable: api
+                    $ref: '#/trigger/api/parameters'
                   - variable: Setvariable
                     $ref: '#/node-output/Set variable/response/payload'
+                  - variable: flowDetails
+                    $ref: '#/flowDetails'
               sample-data: |-
                 {
                   "member": [
@@ -77,6 +92,7 @@ integration:
                       "assethealth": 1234567,
                       "assetid": 1234567,
                       "assetnum": "sample_assetnum",
+                      "externalrefid": "135526467",
                       "assettag": "sample_assettag",
                       "assettype": "sample_assettype",
                       "autowogen": true,
@@ -225,6 +241,8 @@ integration:
                           type: number
                         assetnum:
                           type: string
+                        externalrefid:
+                          type: string
                         assettag:
                           type: string
                         assettype:
@@ -304,8 +322,6 @@ integration:
                         expectedlife:
                           type: number
                         expectedlifedate:
-                          type: string
-                        externalrefid:
                           type: string
                         failurecode:
                           type: string
@@ -483,16 +499,20 @@ integration:
               assembly:
                 $ref: '#/integration/assemblies/assembly-2'
               source:
-                expression: '$JSONParserParse.member '
+                expression: $JSONParserParse.member
                 input:
                   - variable: Request
                     $ref: '#/trigger/payload'
+                  - variable: api
+                    $ref: '#/trigger/api/parameters'
                   - variable: Setvariable
                     $ref: '#/node-output/Set variable/response/payload'
                   - variable: JSONParserParse
                     $ref: '#/node-output/JSON Parser Parse/response/payload'
+                  - variable: flowDetails
+                    $ref: '#/flowDetails'
               mode: sequential
-              continue-on-error: true
+              continue-on-error: false
               map:
                 $map: http://ibm.com/appconnect/map/v1
                 input:
@@ -500,6 +520,8 @@ integration:
                     $ref: '#/block/For each/current-item'
                   - variable: Request
                     $ref: '#/trigger/payload'
+                  - variable: api
+                    $ref: '#/trigger/api/parameters'
                   - variable: Setvariable2
                     $ref: >-
                       #/block/For each/node-output/Set variable
@@ -518,8 +540,20 @@ integration:
                     $ref: '#/node-output/Set variable/response/payload'
                   - variable: JSONParserParse
                     $ref: '#/node-output/JSON Parser Parse/response/payload'
-                customSchemas: {}
-                mappings: []
+                customSchemas:
+                  properties.`output`:
+                    type: object
+                    properties:
+                      triAsset:
+                        type: array
+                        items:
+                          type: object
+                          properties: {}
+                mappings:
+                  - output:
+                      mappings:
+                        - triAsset:
+                            expression: $append([],$Setvariable3.variable.triAssetWithNS)
               display-name: Maximo Asset
           - response:
               name: response-1
@@ -531,22 +565,30 @@ integration:
                     input:
                       - variable: Request
                         $ref: '#/trigger/payload'
+                      - variable: api
+                        $ref: '#/trigger/api/parameters'
                       - variable: Setvariable
                         $ref: '#/node-output/Set variable/response/payload'
                       - variable: JSONParserParse
                         $ref: '#/node-output/JSON Parser Parse/response/payload'
                       - variable: Foreach
                         $ref: '#/node-output/For each/response/payload'
-                    mappings: []
+                    mappings:
+                      - assetSent:
+                          expression: $Foreach.output.triAsset
                   input:
                     - variable: Request
                       $ref: '#/trigger/payload'
+                    - variable: api
+                      $ref: '#/trigger/api/parameters'
                     - variable: Setvariable
                       $ref: '#/node-output/Set variable/response/payload'
                     - variable: JSONParserParse
                       $ref: '#/node-output/JSON Parser Parse/response/payload'
                     - variable: Foreach
                       $ref: '#/node-output/For each/response/payload'
+                    - variable: flowDetails
+                      $ref: '#/flowDetails'
     assembly-2:
       assembly:
         execute:
@@ -559,6 +601,8 @@ integration:
                     $ref: '#/block/For each/current-item'
                   - variable: Request
                     $ref: '#/trigger/payload'
+                  - variable: api
+                    $ref: '#/trigger/api/parameters'
                   - variable: Setvariable
                     $ref: '#/node-output/Set variable/response/payload'
                   - variable: JSONParserParse
@@ -592,6 +636,8 @@ integration:
                             type: string
                           TestEmpty:
                             type: string
+                          triConditionLI:
+                            type: string
                 mappings:
                   - variable:
                       mappings:
@@ -603,8 +649,14 @@ integration:
                                   template: Create Draft
                               - triActiveStartDA:
                                   template: '{{$Foreachitem.installdate}}'
+                              - triConditionLI:
+                                  template: >-
+                                    {{$Foreachitem.status in ["ACTIVE",
+                                    "OPERATING"]?"Excellent":"Poor"}}
                               - triExternalReferenceTX:
-                                  template: '{{$Foreachitem."_id"}}'
+                                  template: >-
+                                    {{$boolean($Foreachitem.externalrefid)?$Foreachitem.externalrefid
+                                    :$Foreachitem.assetnum}}
                               - triIdTX:
                                   template: '{{$Foreachitem.assetnum}}'
                               - triMaintenancePriorityCL:
@@ -615,7 +667,8 @@ integration:
                               - triNameTX:
                                   template: '{{$Foreachitem.description}}'
                               - triOperationTX:
-                                  template: Create/Update
+                                  template: >-
+                                    {{$Foreachitem._action="Delete"?"Retire":"Create/Update"}}
                               - triSerialNumTX:
                                   template: '{{$Foreachitem.serialnum}}'
                               - triSpecNameTX:
@@ -689,15 +742,17 @@ integration:
                         - Content-Type:
                             template: application/json
                         - Properties:
-                            template: spi:triUserMessageTX
+                            template: spi:triTRIRIGAIDTX,spi:triUserMessageTX
                   - url:
-                      template: http://9.30.43.110:8001/oslc/so/triAPICAssetCF
+                      template: '{{$api.triUrl}}'
                 $map: http://ibm.com/appconnect/map/v1
                 input:
                   - variable: Foreachitem
                     $ref: '#/block/For each/current-item'
                   - variable: Request
                     $ref: '#/trigger/payload'
+                  - variable: api
+                    $ref: '#/trigger/api/parameters'
                   - variable: Setvariable2
                     $ref: >-
                       #/block/For each/node-output/Set variable
@@ -710,6 +765,355 @@ integration:
                     $ref: '#/node-output/Set variable/response/payload'
                   - variable: JSONParserParse
                     $ref: '#/node-output/JSON Parser Parse/response/payload'
+                  - variable: flowDetails
+                    $ref: '#/flowDetails'
+          - set-variable:
+              name: Set variable 4
+              map:
+                $map: http://ibm.com/appconnect/map/v1
+                customSchemas:
+                  properties.`variable`:
+                    type: object
+                    properties:
+                      assetSent:
+                        type: object
+                        properties:
+                          triPayload:
+                            type: object
+                            properties: {}
+                          triResponse:
+                            type: object
+                            properties: {}
+                input:
+                  - variable: Foreachitem
+                    $ref: '#/block/For each/current-item'
+                  - variable: Request
+                    $ref: '#/trigger/payload'
+                  - variable: api
+                    $ref: '#/trigger/api/parameters'
+                  - variable: Setvariable2
+                    $ref: >-
+                      #/block/For each/node-output/Set variable
+                      2/response/payload
+                  - variable: Setvariable3
+                    $ref: >-
+                      #/block/For each/node-output/Set variable
+                      3/response/payload
+                  - variable: HTTPInvokemethod
+                    $ref: >-
+                      #/block/For each/node-output/HTTP Invoke
+                      method/response/payload
+                  - variable: HTTPInvokemethodMetadata
+                    $ref: '#/block/For each/node-output/HTTP Invoke method/response'
+                  - variable: Setvariable
+                    $ref: '#/node-output/Set variable/response/payload'
+                  - variable: JSONParserParse
+                    $ref: '#/node-output/JSON Parser Parse/response/payload'
+                mappings:
+                  - variable:
+                      mappings:
+                        - assetSent:
+                            mappings:
+                              - triPayload:
+                                  expression: $Setvariable3.variable.triAssetWithNS
+                              - triResponse:
+                                  expression: $HTTPInvokemethodMetadata
+          - set-variable:
+              name: Set variable 5
+              map:
+                $map: http://ibm.com/appconnect/map/v1
+                customSchemas:
+                  properties.`variable`:
+                    type: object
+                    properties:
+                      triRecordId:
+                        type: object
+                        properties: {}
+                input:
+                  - variable: Foreachitem
+                    $ref: '#/block/For each/current-item'
+                  - variable: Request
+                    $ref: '#/trigger/payload'
+                  - variable: api
+                    $ref: '#/trigger/api/parameters'
+                  - variable: Setvariable2
+                    $ref: >-
+                      #/block/For each/node-output/Set variable
+                      2/response/payload
+                  - variable: Setvariable3
+                    $ref: >-
+                      #/block/For each/node-output/Set variable
+                      3/response/payload
+                  - variable: HTTPInvokemethod
+                    $ref: >-
+                      #/block/For each/node-output/HTTP Invoke
+                      method/response/payload
+                  - variable: HTTPInvokemethodMetadata
+                    $ref: '#/block/For each/node-output/HTTP Invoke method/response'
+                  - variable: Setvariable4
+                    $ref: >-
+                      #/block/For each/node-output/Set variable
+                      4/response/payload
+                  - variable: Setvariable
+                    $ref: '#/node-output/Set variable/response/payload'
+                  - variable: JSONParserParse
+                    $ref: '#/node-output/JSON Parser Parse/response/payload'
+                mappings:
+                  - variable:
+                      mappings:
+                        - triRecordId:
+                            expression: >-
+                              $eval($Setvariable4.variable.assetSent.triResponse.payload.responseBody)."spi:triTRIRIGAIDTX"
+          - if:
+              name: If
+              input:
+                - variable: Foreachitem
+                  $ref: '#/block/For each/current-item'
+                - variable: Request
+                  $ref: '#/trigger/payload'
+                - variable: api
+                  $ref: '#/trigger/api/parameters'
+                - variable: Setvariable2
+                  $ref: '#/block/For each/node-output/Set variable 2/response/payload'
+                - variable: Setvariable3
+                  $ref: '#/block/For each/node-output/Set variable 3/response/payload'
+                - variable: HTTPInvokemethod
+                  $ref: >-
+                    #/block/For each/node-output/HTTP Invoke
+                    method/response/payload
+                - variable: HTTPInvokemethodMetadata
+                  $ref: '#/block/For each/node-output/HTTP Invoke method/response'
+                - variable: Setvariable4
+                  $ref: '#/block/For each/node-output/Set variable 4/response/payload'
+                - variable: Setvariable5
+                  $ref: '#/block/For each/node-output/Set variable 5/response/payload'
+                - variable: Setvariable
+                  $ref: '#/node-output/Set variable/response/payload'
+                - variable: JSONParserParse
+                  $ref: '#/node-output/JSON Parser Parse/response/payload'
+                - variable: flowDetails
+                  $ref: '#/flowDetails'
+              branch:
+                - condition:
+                    and:
+                      - '{{$boolean($Setvariable5.variable.triRecordId)}}':
+                          '=': 'true'
+                      - '{{$Setvariable2.variable.triAssetPayload.triExternalReferenceTX}}': '{{$Foreachitem.assetnum}}'
+                  execute:
+                    - set-variable:
+                        name: Set variable 6
+                        map:
+                          $map: http://ibm.com/appconnect/map/v1
+                          customSchemas:
+                            properties.`variable`:
+                              type: object
+                              properties:
+                                mxAsset:
+                                  type: object
+                                  properties:
+                                    assetnum:
+                                      type: string
+                                    externalrefid:
+                                      type: string
+                                    _action:
+                                      type: string
+                                    siteid:
+                                      type: string
+                          input:
+                            - variable: Foreachitem
+                              $ref: '#/block/For each/current-item'
+                            - variable: Request
+                              $ref: '#/trigger/payload'
+                            - variable: api
+                              $ref: '#/trigger/api/parameters'
+                            - variable: Setvariable2
+                              $ref: >-
+                                #/block/For each/node-output/Set variable
+                                2/response/payload
+                            - variable: Setvariable3
+                              $ref: >-
+                                #/block/For each/node-output/Set variable
+                                3/response/payload
+                            - variable: HTTPInvokemethod
+                              $ref: >-
+                                #/block/For each/node-output/HTTP Invoke
+                                method/response/payload
+                            - variable: HTTPInvokemethodMetadata
+                              $ref: >-
+                                #/block/For each/node-output/HTTP Invoke
+                                method/response
+                            - variable: Setvariable4
+                              $ref: >-
+                                #/block/For each/node-output/Set variable
+                                4/response/payload
+                            - variable: Setvariable5
+                              $ref: >-
+                                #/block/For each/node-output/Set variable
+                                5/response/payload
+                            - variable: Setvariable
+                              $ref: '#/node-output/Set variable/response/payload'
+                            - variable: JSONParserParse
+                              $ref: '#/node-output/JSON Parser Parse/response/payload'
+                          mappings:
+                            - variable:
+                                mappings:
+                                  - mxAsset:
+                                      mappings:
+                                        - _action:
+                                            template: AddChange
+                                        - assetnum:
+                                            template: '{{$Foreachitem.assetnum}}'
+                                        - externalrefid:
+                                            template: '{{$Setvariable5.variable.triRecordId}}'
+                                        - siteid:
+                                            template: '{{$Foreachitem.siteid}}'
+                    - custom-action:
+                        name: HTTP Invoke method 2
+                        target:
+                          $ref: '#/integration/action-interfaces/action-interface-4'
+                        action: INVOKE
+                        map:
+                          customSchemas:
+                            properties.`requestHeaders`:
+                              type: object
+                              properties:
+                                Content-Type:
+                                  type: string
+                                x-method-override:
+                                  type: string
+                          mappings:
+                            - continue2xx:
+                                expression: 'false'
+                            - method:
+                                template: POST
+                            - requestBody:
+                                template: '{{$Setvariable6.variable.mxAsset}}'
+                            - requestHeaders:
+                                mappings:
+                                  - Content-Type:
+                                      template: application/json
+                                  - x-method-override:
+                                      template: SYNC
+                            - url:
+                                template: '{{$api.mxUrl}}'
+                          $map: http://ibm.com/appconnect/map/v1
+                          input:
+                            - variable: Foreachitem
+                              $ref: '#/block/For each/current-item'
+                            - variable: Request
+                              $ref: '#/trigger/payload'
+                            - variable: api
+                              $ref: '#/trigger/api/parameters'
+                            - variable: Setvariable6
+                              $ref: >-
+                                #/block/If/node-output/Set variable
+                                6/response/payload
+                            - variable: Setvariable2
+                              $ref: >-
+                                #/block/For each/node-output/Set variable
+                                2/response/payload
+                            - variable: Setvariable3
+                              $ref: >-
+                                #/block/For each/node-output/Set variable
+                                3/response/payload
+                            - variable: HTTPInvokemethod
+                              $ref: >-
+                                #/block/For each/node-output/HTTP Invoke
+                                method/response/payload
+                            - variable: HTTPInvokemethodMetadata
+                              $ref: >-
+                                #/block/For each/node-output/HTTP Invoke
+                                method/response
+                            - variable: Setvariable4
+                              $ref: >-
+                                #/block/For each/node-output/Set variable
+                                4/response/payload
+                            - variable: Setvariable5
+                              $ref: >-
+                                #/block/For each/node-output/Set variable
+                                5/response/payload
+                            - variable: Setvariable
+                              $ref: '#/node-output/Set variable/response/payload'
+                            - variable: JSONParserParse
+                              $ref: '#/node-output/JSON Parser Parse/response/payload'
+                            - variable: flowDetails
+                              $ref: '#/flowDetails'
+                    - set-variable:
+                        name: Set variable 7
+                        map:
+                          $map: http://ibm.com/appconnect/map/v1
+                          customSchemas:
+                            properties.`variable`:
+                              type: object
+                              properties:
+                                mxUpdateAsset:
+                                  type: object
+                                  properties:
+                                    datasent:
+                                      type: object
+                                      properties: {}
+                                    mxresponse:
+                                      type: object
+                                      properties: {}
+                          input:
+                            - variable: Foreachitem
+                              $ref: '#/block/For each/current-item'
+                            - variable: Request
+                              $ref: '#/trigger/payload'
+                            - variable: api
+                              $ref: '#/trigger/api/parameters'
+                            - variable: Setvariable6
+                              $ref: >-
+                                #/block/If/node-output/Set variable
+                                6/response/payload
+                            - variable: HTTPInvokemethod2
+                              $ref: >-
+                                #/block/If/node-output/HTTP Invoke method
+                                2/response/payload
+                            - variable: HTTPInvokemethod2Metadata
+                              $ref: >-
+                                #/block/If/node-output/HTTP Invoke method
+                                2/response
+                            - variable: Setvariable2
+                              $ref: >-
+                                #/block/For each/node-output/Set variable
+                                2/response/payload
+                            - variable: Setvariable3
+                              $ref: >-
+                                #/block/For each/node-output/Set variable
+                                3/response/payload
+                            - variable: HTTPInvokemethod
+                              $ref: >-
+                                #/block/For each/node-output/HTTP Invoke
+                                method/response/payload
+                            - variable: HTTPInvokemethodMetadata
+                              $ref: >-
+                                #/block/For each/node-output/HTTP Invoke
+                                method/response
+                            - variable: Setvariable4
+                              $ref: >-
+                                #/block/For each/node-output/Set variable
+                                4/response/payload
+                            - variable: Setvariable5
+                              $ref: >-
+                                #/block/For each/node-output/Set variable
+                                5/response/payload
+                            - variable: Setvariable
+                              $ref: '#/node-output/Set variable/response/payload'
+                            - variable: JSONParserParse
+                              $ref: '#/node-output/JSON Parser Parse/response/payload'
+                          mappings:
+                            - variable:
+                                mappings:
+                                  - mxUpdateAsset:
+                                      mappings:
+                                        - datasent:
+                                            expression: $Setvariable6.variable.mxAsset
+                                        - mxresponse:
+                                            expression: $HTTPInvokemethod2Metadata
+              else:
+                execute: []
+              output-schema: {}
   name: PLUSTMXAsset2TRI
 models:
   triAsset:
@@ -719,6 +1123,11 @@ models:
         required: false
         id: true
         type: string
+      assetSent:
+        required: false
+        id: false
+        type:
+          - type: {}
     plural: triAsset
     description: ' '
     operations:
@@ -734,6 +1143,14 @@ models:
             type: mxAsset
             http:
               source: body
+          - arg: triUrl
+            type: string
+            http:
+              source: query
+          - arg: mxUrl
+            type: string
+            http:
+              source: query
         returns:
           arg: data
           type: triAsset
