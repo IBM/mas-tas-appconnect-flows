@@ -102,19 +102,19 @@ Within Maximo, configure your instance to be ready to receive records from TRIRI
     2. Select 'MXASSET' under Object Structure which will populate the Object Structure Sub-Records table
     3. Click on 'Enable Event Listener' on the left side under More Actions
     4. Make sure Publish JSON and Retain MBO's are checked, the Operation should default to Publish and the Adapter should default to MAXIMO.
-    5. Click 'Save Publish Channel' on the left under Common Actions
+    5. Click 'Save Enterprise Service' on the left under Common Actions
   - For Location
     1. Under the System name fill in PLUSTMXOPERLOCInterface and in the Description fill in "OPERATION LOCATION"
     2. Select 'MXOPERLOC' under Object Structure which will populate the Object Structure Sub-Records table
     3. Click on 'Enable Event Listener' on the left side under More Actions
     4. Make sure Publish JSON and Retain MBO's are checked, the Operation should default to Publish and the Adapter should default to MAXIMO.
-    5. Click 'Save Publish Channel' on the left under Common Actions
+    5. Click 'Save Enterprise Service' on the left under Common Actions
   - For Person
     1. Under the System name fill in PLUSTMXPERSONInterface and in the Description fill in "PERSON"
     2. Select 'MXPERSON' under Object Structure which will populate the Object Structure Sub-Records table
     3. Click on 'Enable Event Listener' on the left side under More Actions
     4. Make sure Publish JSON and Retain MBO's are checked, the Operation should default to Publish and the Adapter should default to MAXIMO.
-    5. Click 'Save Publish Channel' on the left under Common Actions
+    5. Click 'Save Enterprise Service' on the left under Common Actions
 
 ### 7. Create the End Points for each integration 
  
