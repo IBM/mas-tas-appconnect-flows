@@ -219,7 +219,7 @@ Navigate to Tools > Object Migration and import the OM Package.
 
 ### Access to an instance of App Connect with a deployed instance of a Designer is required.
 
-Two accounts are need to be created from the 'Catalog' tab in order to connect the applications.
+Two accounts need to be created from the 'Catalog' tab in order to connect the applications.
 
 Once all of the connectors have loaded, type in 'http' to find the HTTP Application.
  
@@ -281,6 +281,31 @@ Go to the 'Test' tab once it shows that the flow is 'Running' and select the 'PO
 Click on 'Try It' and grab the url and security credentials from this screen for the next step.
  
 <img src="/Pics/AppConnect-Config-Full.jpeg" >
+ 
+ 
+If your instance of AppConnect is through the cloud, your page will look a bit different
+ 
+The interface is mostly the same, but instead of 'Try It' you'll see a tab called 'Manage'
+ 
+<img src="/Pics/AppConnect-Cloud-Manage-Tab.jpeg" >
+ 
+This page contains a few important pieces of information that you'll need to complete the configuration. First, at the top of the page under 'API Info' you'll see a field called 'Route'
+ 
+<img src="/Pics/AppConnect-Cloud-Route.jpeg" >
+ 
+This is the route for your flow, you'll need to piece this together with the correct path of the flow that you're implementing in order to create the proper flow url.
+ 
+At the bottom of the page is a field called 'Sharing outside of Cloud Foundry organization'.
+ 
+<img src="/Pics/AppConnect-Cloud-Sharing.jpeg" >
+
+Here is where you will create your apikey for authentication. The on-prem set up uses basic authentication but the cloud configuration uses an apikey to authorize access. Click on 'Create API key and documentation link' 
+  
+Provide a name and it will generate an apikey for you to use with this flow along with a documentation link that looks like the 'Test' page from the on-prem configuration.
+ 
+<img src="/Pics/AppConnect-Cloud-Documentation-Link.jpeg" > 
+ 
+The end of the url at the top of the page should have the path that will complete the route url. Copy the end of the url that begins with 'tri' and add it to the piece gathered earlier. The 6 character string that precedes the path on the documentation should match the last 6 characters of the route piece from before.
 
 </details>
 
