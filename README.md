@@ -46,13 +46,7 @@ Within Maximo, configure your instance to be ready to receive records from TRIRI
     5. Default Stock Category: STK
   - Click Save Organization on the left side of the screen under Common Actions. This will be set to Active later once there is a clearing account.
 
-### 2. Create a site TRIMAIN and set it to active
- 
-  - On the Organization page, click on the 'Sites' tab at the top of the page.
-  - Click New Row under 'Sites' and enter TRIMAIN for Site and "MAIN Site" for Description. Set the site to Active.
-  - Click Save Organization.
-
-### 3. Create a Testing clearing account in Chart of Accounts
+### 2. Create a Testing clearing account in Chart of Accounts
   
   - Navigate to Financial -> Chart of Accounts and click on the previously created TRIRIGA org in the Organizations table. Currently, there should be no GL Accounts for TRIRIGA present
   - Click 'GL Component Maintenance' on the left side under More Actions and add a New Row with the following values:
@@ -61,6 +55,13 @@ Within Maximo, configure your instance to be ready to receive records from TRIRI
     3. Active?: Yes
   - Click OK. Click New Row under GL Accounts for TRIRIGA and click the magnifying glass to search for that GL Component. Select it and it should populate in the GL Account & Description fields. The Active Date field should auto populate to the current date.
  - Now that this account is present, head back to Organizations and update the TRIRIGA organization to show the just created Clearing Account, tick the Active box, and click Save Organization.
+ 
+ 
+ ### 3. Create a site TRIMAIN and set it to active
+ 
+  - On the Organization page, click on the 'Sites' tab at the top of the page.
+  - Click New Row under 'Sites' and enter TRIMAIN for Site and "MAIN Site" for Description. Set the site to Active.
+  - Click Save Organization.
 
 ### 4. Create the PLUSTTRIRIGA External System
 
@@ -100,21 +101,15 @@ Within Maximo, configure your instance to be ready to receive records from TRIRI
   - For Asset
     1. Under the System name fill in PLUSTMXASSETInterface and in the Description fill in "ASSETS"
     2. Select 'MXASSET' under Object Structure which will populate the Object Structure Sub-Records table
-    3. Click on 'Enable Event Listener' on the left side under More Actions
-    4. Make sure Publish JSON and Retain MBO's are checked, the Operation should default to Publish and the Adapter should default to MAXIMO.
-    5. Click 'Save Enterprise Service' on the left under Common Actions
+    3. Click 'Save Enterprise Service' on the left under Common Actions
   - For Location
     1. Under the System name fill in PLUSTMXOPERLOCInterface and in the Description fill in "OPERATION LOCATION"
     2. Select 'MXOPERLOC' under Object Structure which will populate the Object Structure Sub-Records table
-    3. Click on 'Enable Event Listener' on the left side under More Actions
-    4. Make sure Publish JSON and Retain MBO's are checked, the Operation should default to Publish and the Adapter should default to MAXIMO.
-    5. Click 'Save Enterprise Service' on the left under Common Actions
+    3. Click 'Save Enterprise Service' on the left under Common Actions
   - For Person
     1. Under the System name fill in PLUSTMXPERSONInterface and in the Description fill in "PERSON"
     2. Select 'MXPERSON' under Object Structure which will populate the Object Structure Sub-Records table
-    3. Click on 'Enable Event Listener' on the left side under More Actions
-    4. Make sure Publish JSON and Retain MBO's are checked, the Operation should default to Publish and the Adapter should default to MAXIMO.
-    5. Click 'Save Enterprise Service' on the left under Common Actions
+    3. Click 'Save Enterprise Service' on the left under Common Actions
 
 ### 7. Create the End Points for each integration 
  
@@ -179,28 +174,50 @@ Within Maximo, configure your instance to be ready to receive records from TRIRI
  
 ### 10. Integration Controls
  
-  - On the left side of the External Systems page, select Setup Integration Controls under 'More Actions'
-  - There should be 6 Integration Controls listed with the following associations:
+  - There should be 5 Integration Controls created with the following associations:
  
-    Integration Control | MAXIMO Value | External Value
-    ---|---|---
-    PLUSTLOCSTATUS | ACTIVE | ACTIVE
-    "" | INACTIVE | REVIEW IN PROGRESS
-    "" | OPERATING | OPERATING
-    PLUSTORG | TRIMAIN | IBM
-    "" | TRIRIGA | TRIRIGA
-    PLUSTORGEN | TRIRIGA | EAGLENA
-    "" | TRIRIGA | IBM
-    "" | TRIRIGA | MAXIMO ORG
-    "" | TRIRIGA | TEST
-    "" | TRIRIGA | TRIRIGA
-    PLUSTPRIORITY | 1 | High
-    "" | 2 | Medium
-    "" | 3 | Low
-    PLUSTSITEEN | TRIMAIN | BEDFORD
-    "" | TRIMAIN | SPACE 01
-    "" | TRIMAIN | TEST
-    "" | TRIMAIN | TRIMAIN
+    Integration Control | MAXIMO Value | External Value | Description | Domain
+    ---|---|---|---|---
+    PLUSTLOCSTATUS | ACTIVE | ACTIVE | Tririga Location Status mapping for inbound flows | LOCASSETSTATUS
+    "" | INACTIVE | REVIEW IN PROGRESS | N/A | N/A
+    "" | OPERATING | OPERATING | N/A | N/A
+    PLUSTORG | TRIMAIN | IBM | Organization mapping for Tririga | N/A
+    "" | TRIRIGA | TRIRIGA | N/A | N/A
+    PLUSTORGEN | TRIRIGA | EAGLENA | Tririga Organization mapping for Inbound flow | N/A
+    "" | TRIRIGA | IBM | N/A | N/A
+    "" | TRIRIGA | MAXIMO ORG | N/A | N/A
+    "" | TRIRIGA | TEST | N/A | N/A
+    "" | TRIRIGA | TRIRIGA | N/A | N/A
+    PLUSTPRIORITY | 1 | High | Priority mapping for Tririga | N/A
+    "" | 2 | Medium | N/A | N/A
+    "" | 3 | Low | N/A | N/A
+    PLUSTSITEEN | TRIMAIN | BEDFORD | Tririga Location mapping for inbound flows | N/A
+    "" | TRIMAIN | SPACE 01 | N/A | N/A
+    "" | TRIMAIN | TEST | N/A | N/A
+    "" | TRIMAIN | TRIMAIN | N/A | N/A |
+    
+- Once these Integration Controls are created, associate them in each of the created Enterprise Services and Publish Channels using the below two tables
+
+Enterprise Service | Control
+--|-- 
+PLUSTMXASSETInterface | PLUSTORGEN
+"" | PLUSTPRIORITY
+"" | PLUSTSITEEN 
+PLUSTMXOPERLOCInterface | PLUSTLOCSTATUS
+ "" | PLUSTSITEEN
+ "" | PLUSTSTATUS
+ PLUSTMXPERSONInterface | PLUSTORGEN
+ "" | PLUSTSITEEN
+
+
+Publish Channel | Control
+--|--
+PLUSTMXASSETInterface | PLUSTPRIORITY
+PLUSTMXOPERLOCInterface | N/A
+PLUSTMXPERSONInterface | PLUSTORG
+ 
+ 
+  - On the left side of the External Systems page, select Setup Integration Controls under 'More Actions' and make sure that all 5 Integration Controls are showing as present.
 
   </details>
   
