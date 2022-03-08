@@ -325,6 +325,19 @@ Fill in the properties with the url, username, and password from Step 2
  
 Click the 'Test' button at the bottom right of the screen and send a simple {"hello":"world"}. With the proper configuration, there will be an expected error that ends with 'Bad Request'. If there is a different error than Bad Request in the Response window, refer to the Troubleshooting section to debug.
  
+ 
+If the instance is based in the cloud, there is a slight difference in authorization.
+ 
+Since the authorization is with an api key, remove the basic authorization values (USERNAME & PASSWORD) and in the 'HEADERS' field add the following after Content-Type: 
+ 
+X-IBM-Client-Id: [apikey from Step 2] 
+ 
+Make sure to separate these two values with a comma. It should look something like this:
+ 
+Content-Type: application/json, X-IBM-Client-Id: [apikey]
+ 
+<img src="/Pics/Cloud-End-Point.png" > 
+ 
 </details>
  
  <details><summary><b>TRIRIGA</b></summary>
@@ -373,11 +386,11 @@ Once all three have been entered in, click 'Retrieve signer information' and the
 
 With these 4 steps completed, test the flow with a payload.
 
-Head back to the 'Try It' page in the deployed flow and scroll down to the bottom of the page under Parameters.
+Head back to the 'Try It' page in the deployed flow (or the documentation page if cloud-based) and scroll down to the bottom of the page under Parameters.
 
 <img src="/Pics/App-Connect-Test.jpeg" >
 
-In here, generate a test payload and send it through the flow to monitor if the information populates in the desired application.
+In here, fill in mxUrl and triUrl with the urls for the respective applications, generate a test payload to send through the flow and monitor if the information populates in the desired application.
 
 If there is a response other than 200 from the Test, refer to Troubleshooting.
 
