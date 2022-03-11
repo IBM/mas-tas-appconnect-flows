@@ -27,8 +27,8 @@ A detailed breakdown of the specific fields being mapped within each flow can be
 ## Pre-requisites
 
  <details><summary><b>MAXIMO</b></summary>
-
-Credentials and access to an instance of Maximo as well as the WebSphere application which hosts Maximo are required.
+ 
+### Credentials and access to an instance of Maximo as well as the WebSphere application which hosts Maximo are required. This code pattern has been tested on Maximo 7.6.1.2 as well as MAS 8.6 
  
 The following steps and pre-requisites are done against a Maximo demo database. The naming conventions may slightly differ from this, but these are the necessary components. 
 
@@ -223,7 +223,7 @@ PLUSTMXPERSONInterface | PLUSTORG
   
  <details><summary><b>TRIRIGA</b></summary>
 
-Credentials and access to an instance of TRIRIGA are required
+### Credentials and access to an instance of TRIRIGA are required. This code pattern has been tested with TRIRIGA version 10.6.1 as well as TAS 11.0
 
 Download the latest TRIRIGA APIs OM Package from this [TRIRIGA APIs GitHub Repository](https://github.com/IBM/tririga-api/blob/main/README.md).
  
@@ -234,7 +234,7 @@ Navigate to Tools > Object Migration and import the OM Package.
 
  <details><summary><b>App Connect</b></summary>
 
-### Access to an instance of App Connect with a deployed instance of a Designer is required.
+### Access to an instance of App Connect with a deployed instance of a Designer is required. This code pattern has been tested with AppConnect version 3.0
 
 Two accounts need to be created from the 'Catalog' tab in order to connect the applications.
 
