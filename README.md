@@ -74,6 +74,11 @@ Within Maximo, configure your instance to be ready to receive records from TRIRI
   - Save the External System
 
 ### 5. Create the Publish Channels for each integration
+ 
+ 
+ 
+ <img src="/Pics/Publish-Channel-Config.png">
+ 
 
   - Navigate to Integration -> Publish Channels
   - For Asset
@@ -97,6 +102,10 @@ Within Maximo, configure your instance to be ready to receive records from TRIRI
 
 ### 6. Create the Enterprise Services for each integration
  
+ 
+ 
+ <img src="/Pics/Enterprise-Service-Config.png">
+ 
   - Navigate to Integration -> Enterprise Services and click on the blue plus button at the top of the page
   - For Asset
     1. Under the System name fill in PLUSTMXASSETInterface and in the Description fill in "ASSETS"
@@ -113,7 +122,11 @@ Within Maximo, configure your instance to be ready to receive records from TRIRI
 
 ### 7. Create the End Points for each integration 
  
-  - Navigate to Integration -> End Points and click on the blue plus bitton at the top of the page
+ 
+ <img src="/Pics/End-Point-Config.png">
+ 
+ 
+  - Navigate to Integration -> End Points and click on the blue plus button at the top of the page
   - For Asset
     1. Under End Point fill in PLUSTASSET and in the Description fill in "AppConnect ASSET outbound to TRIRIGA"
     2. Select 'HTTP' for Handler
@@ -143,7 +156,12 @@ Within Maximo, configure your instance to be ready to receive records from TRIRI
 
 ### 8. Link the Publish Channels & Enterprise Services to the PLUSTTRIRIGA External System
  
-  - On the External Systems page, switch over to the Publish Channels tab. One at a time, click New Row and select the Publish Channel for the just created integrations. Once finished, the linked Publish Channels should look like the table below:
+  - On the External Systems page, search and select PLUSTTRIRIGA. Switch over to the Publish Channels tab. One at a time, click New Row and select the Publish Channel for the just created integrations. Make sure the Publish Channel name matches the End Point and it is Enabled like the below image:
+ 
+ <img src="/Pics/Link-Publish-Channel.png">
+ 
+ 
+ Once finished, the linked Publish Channels should look like the table below:
  
   Channel | Description | Adaptor | End Point | User Defined | Enabled
   ---|---|---|---|---|---
@@ -152,7 +170,12 @@ Within Maximo, configure your instance to be ready to receive records from TRIRI
   PLUSTMXPERSONInterface | PERSON | MAXIMO | PLUSTPERSON | Yes | Yes
  
   - Save the External System
-  - Switch over to the Enterprise Services tab. One at a time, click New Row and select the Enterprise Service for the integrations you just created. When you have finished, your linked Enterprise Services should look like the table below:
+  - Switch over to the Enterprise Services tab. One at a time, click New Row and select the Enterprise Service for the integrations you just created. It should look similar to the below image:
+ 
+ 
+ <img src="/Pics/Link-Enterprise-Service.png">
+ 
+ When you have finished, your linked Enterprise Services should look like the table below:
  
   Service | Description | Adaptor | Operation | User Defined | Enabled | Use Continuous Queue?
   ---|---|---|---|---|---|---
@@ -196,7 +219,7 @@ Within Maximo, configure your instance to be ready to receive records from TRIRI
     "" | TRIMAIN | TEST | N/A | N/A
     "" | TRIMAIN | TRIMAIN | N/A | N/A |
     
-- Once these Integration Controls are created, associate them in each of the created Enterprise Services and Publish Channels using the below two tables
+- Once these Integration Controls are created, associate them in both the created Enterprise Services and Publish Channels by using the following two tables
 
 Enterprise Service | Control
 --|-- 
@@ -217,7 +240,7 @@ PLUSTMXOPERLOCInterface | N/A
 PLUSTMXPERSONInterface | PLUSTORG
  
  
-  - On the left side of the External Systems page, select Setup Integration Controls under 'More Actions' and make sure that all 5 Integration Controls are showing as present.
+  - Return to the PLUSTTRIRIGA External System. On the left side of the External Systems page, select Setup Integration Controls under 'More Actions' and make sure that all 5 Integration Controls are showing as present.
 
   </details>
   
