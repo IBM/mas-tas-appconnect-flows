@@ -251,7 +251,7 @@ PLUSTMXPERSONInterface | PLUSTORG
 1. Download the latest TRIRIGA APIs OM Package from this [TRIRIGA APIs GitHub Repository](https://github.com/IBM/tririga-api/blob/main/README.md). Navigate to Tools > Object Migration and import the OM Package. 
 2. The Date Time Format field in the user profile must be in UTC. Navigate to Portfolio > People > My Profile and select the user profile that will be triggering the action. The Date Time Format should be in UTC as shown below.
 
-<img src= "/Pics/TRI-UTC.png>
+<img src= "/Pics/TRI-UTC.png">
 
  
   </details>
