@@ -63,10 +63,10 @@ Within Maximo, configure your instance to be ready to receive records from TRIRI
   - Click New Row under 'Sites' and enter TRIMAIN for Site and "MAIN Site" for Description. Set the site to Active.
   - Click Save Organization.
 
-### 4. Create the PLUSTTRIRIGA External System
+### 4. Create the PLUSITRIRIGA External System
 
   - Navigate to Integration -> External Systems and click on the blue plus button at the top of the page.
-  - Under the System name fill in PLUSTTRIRIGA and in the Description fill in "To integrate Maximo with TRIRIGA"
+  - Under the System name fill in PLUSITRIRIGA and in the Description fill in "To integrate Maximo with TRIRIGA"
   - Enable the System and then fill in the Queues on the right hand side as follows:
     1. Outbound Sequential Queue: jms/maximo/int/queues/sqout
     2. Inbound Sequential Queue: jms/maximo/int/queues/sqin
@@ -83,19 +83,19 @@ Within Maximo, configure your instance to be ready to receive records from TRIRI
   - Navigate to Integration -> Publish Channels
   - For Asset
     1. Search for 'MXASSETInterface' under the Publish Channel field. Click on the channel and from the left side of the screen select 'Duplicate Publish Channel' 
-    2. Rename the channel PLUSTMXASSETInterface
+    2. Rename the channel PLUSIMXASSETInterface
     3. Click on 'Enable Event Listener' on the left side under More Actions
     4. Make sure Publish JSON and Retain MBO's are checked, the Operation should default to Publish and the Adapter should default to MAXIMO.
     5. Click 'Save Publish Channel' on the left under Common Actions
   - For Location
     1. Search for 'MXOPERLOCInterface' under the Publish Channel field. Click on the channel and from the left side of the screen select 'Duplicate Publish Channel' 
-    2. Rename the channel PLUSTMXOPERLOCInterface
+    2. Rename the channel PLUSIMXOPERLOCInterface
     3. Click on 'Enable Event Listener' on the left side under More Actions
     4. Make sure Publish JSON and Retain MBO's are checked, the Operation should default to Publish and the Adapter should default to MAXIMO.
     5. Click 'Save Publish Channel' on the left under Common Actions
   - For Person
     1. Search for 'MXPERSONInterface' under the Publish Channel field. Click on the channel and from the left side of the screen select 'Duplicate Publish Channel' 
-    2. Rename the channel PLUSTMXPERSONInterface
+    2. Rename the channel PLUSIMXPERSONInterface
     3. Click on 'Enable Event Listener' on the left side under More Actions
     4. Make sure Publish JSON and Retain MBO's are checked, the Operation should default to Publish and the Adapter should default to MAXIMO.
     5. Click 'Save Publish Channel' on the left under Common Actions
@@ -108,15 +108,15 @@ Within Maximo, configure your instance to be ready to receive records from TRIRI
  
   - Navigate to Integration -> Enterprise Services and click on the blue plus button at the top of the page
   - For Asset
-    1. Under the System name fill in PLUSTMXASSETInterface and in the Description fill in "ASSETS"
+    1. Under the System name fill in PLUSIMXASSETInterface and in the Description fill in "ASSETS"
     2. Select 'MXASSET' under Object Structure which will populate the Object Structure Sub-Records table
     3. Click 'Save Enterprise Service' on the left under Common Actions
   - For Location
-    1. Under the System name fill in PLUSTMXOPERLOCInterface and in the Description fill in "OPERATION LOCATION"
+    1. Under the System name fill in PLUSIMXOPERLOCInterface and in the Description fill in "OPERATION LOCATION"
     2. Select 'MXOPERLOC' under Object Structure which will populate the Object Structure Sub-Records table
     3. Click 'Save Enterprise Service' on the left under Common Actions
   - For Person
-    1. Under the System name fill in PLUSTMXPERSONInterface and in the Description fill in "PERSON"
+    1. Under the System name fill in PLUSIMXPERSONInterface and in the Description fill in "PERSON"
     2. Select 'MXPERSON' under Object Structure which will populate the Object Structure Sub-Records table
     3. Click 'Save Enterprise Service' on the left under Common Actions
 
@@ -128,7 +128,7 @@ Within Maximo, configure your instance to be ready to receive records from TRIRI
  
   - Navigate to Integration -> End Points and click on the blue plus button at the top of the page
   - For Asset
-    1. Under End Point fill in PLUSTASSET and in the Description fill in "AppConnect ASSET outbound to TRIRIGA"
+    1. Under End Point fill in PLUSIASSET and in the Description fill in "AppConnect ASSET outbound to TRIRIGA"
     2. Select 'HTTP' for Handler
     3. Click on 'Save End Point' on the left side under More Actions which will populate the Properties for the End Point
     4. Until the flows have a destination url, we can only fill in certain fields:
@@ -137,7 +137,7 @@ Within Maximo, configure your instance to be ready to receive records from TRIRI
     5. Save the End Point
  
   - For Location
-    1. Under End Point fill in PLUSTLOCATION and in the Description fill in "AppConnect LOCATION outbound to TRIRIGA"
+    1. Under End Point fill in PLUSILOCATION and in the Description fill in "AppConnect LOCATION outbound to TRIRIGA"
     2. Select 'HTTP' for Handler
     3. Click on 'Save End Point' on the left side under More Actions which will populate the Properties for the End Point
     4. Until the flows have a destination url, we can only fill in certain fields:
@@ -145,7 +145,7 @@ Within Maximo, configure your instance to be ready to receive records from TRIRI
        - HTTPMETHOD: POST
     5. Save the End Point
   - For Person
-    1. Under End Point fill in PLUSTPERSON and in the Description fill in "AppConnect PERSON outbound to TRIRIGA"
+    1. Under End Point fill in PLUSIPERSON and in the Description fill in "AppConnect PERSON outbound to TRIRIGA"
     2. Select 'HTTP' for Handler
     3. Click on 'Save End Point' on the left side under More Actions which will populate the Properties for the End Point
     4. Until the flows have a destination url, we can only fill in certain fields:
@@ -154,9 +154,9 @@ Within Maximo, configure your instance to be ready to receive records from TRIRI
     5. Save the End Point
 
 
-### 8. Link the Publish Channels & Enterprise Services to the PLUSTTRIRIGA External System
+### 8. Link the Publish Channels & Enterprise Services to the PLUSITRIRIGA External System
  
-  - On the External Systems page, search and select PLUSTTRIRIGA. Switch over to the Publish Channels tab. One at a time, click New Row and select the Publish Channel for the just created integrations. Make sure the Publish Channel name matches the End Point and it is Enabled like the below image:
+  - On the External Systems page, search and select PLUSITRIRIGA. Switch over to the Publish Channels tab. One at a time, click New Row and select the Publish Channel for the just created integrations. Make sure the Publish Channel name matches the End Point and it is Enabled like the below image:
  
  <img src="/Pics/Link-Publish-Channel.png">
  
@@ -165,9 +165,9 @@ Within Maximo, configure your instance to be ready to receive records from TRIRI
  
   Channel | Description | Adaptor | End Point | User Defined | Enabled
   ---|---|---|---|---|---
-  PLUSTMXASSETInterface| ASSETS | MAXIMO | PLUSTASSET | Yes | Yes
-  PLUSTMXOPERLOCInterface | OPERATION LOCATION | MAXIMO | PLUSTLOCATION | Yes | Yes
-  PLUSTMXPERSONInterface | PERSON | MAXIMO | PLUSTPERSON | Yes | Yes
+  PLUSIMXASSETInterface| ASSETS | MAXIMO | PLUSIASSET | Yes | Yes
+  PLUSIMXOPERLOCInterface | OPERATION LOCATION | MAXIMO | PLUSILOCATION | Yes | Yes
+  PLUSIMXPERSONInterface | PERSON | MAXIMO | PLUSIPERSON | Yes | Yes
  
   - Save the External System
   - Switch over to the Enterprise Services tab. One at a time, click New Row and select the Enterprise Service for the integrations you just created. It should look similar to the below image:
@@ -179,9 +179,9 @@ Within Maximo, configure your instance to be ready to receive records from TRIRI
  
   Service | Description | Adaptor | Operation | User Defined | Enabled | Use Continuous Queue?
   ---|---|---|---|---|---|---
-  PLUSTMXASSETInterface| ASSETS | MAXIMO | Sync | Yes | Yes | Yes
-  PLUSTMXOPERLOCInterface | OPERATION LOCATION | MAXIMO | Sync | Yes | Yes | Yes
-  PLUSTMXPERSONInterface | PERSON | MAXIMO | Sync | Yes | Yes | Yes
+  PLUSIMXASSETInterface| ASSETS | MAXIMO | Sync | Yes | Yes | Yes
+  PLUSIMXOPERLOCInterface | OPERATION LOCATION | MAXIMO | Sync | Yes | Yes | Yes
+  PLUSIMXPERSONInterface | PERSON | MAXIMO | Sync | Yes | Yes | Yes
  
   - Save the External System
 
@@ -201,20 +201,20 @@ Within Maximo, configure your instance to be ready to receive records from TRIRI
  
     Integration Control | MAXIMO Value | External Value | Description | Domain
     ---|---|---|---|---
-    PLUSTLOCSTATUS | ACTIVE | ACTIVE | Tririga Location Status mapping for inbound flows | LOCASSETSTATUS
+    PLUSILOCSTATUS | ACTIVE | ACTIVE | Tririga Location Status mapping for inbound flows | LOCASSETSTATUS
     "" | INACTIVE | REVIEW IN PROGRESS | N/A | N/A
     "" | OPERATING | OPERATING | N/A | N/A
-    PLUSTORG | TRIMAIN | IBM | Organization mapping for Tririga | N/A
+    PLUSIORG | TRIMAIN | IBM | Organization mapping for Tririga | N/A
     "" | TRIRIGA | TRIRIGA | N/A | N/A
-    PLUSTORGEN | TRIRIGA | EAGLENA | Tririga Organization mapping for Inbound flow | N/A
+    PLUSIORGEN | TRIRIGA | EAGLENA | Tririga Organization mapping for Inbound flow | N/A
     "" | TRIRIGA | IBM | N/A | N/A
     "" | TRIRIGA | MAXIMO ORG | N/A | N/A
     "" | TRIRIGA | TEST | N/A | N/A
     "" | TRIRIGA | TRIRIGA | N/A | N/A
-    PLUSTPRIORITY | 1 | High | Priority mapping for Tririga | N/A
+    PLUSIPRIORITY | 1 | High | Priority mapping for Tririga | N/A
     "" | 2 | Medium | N/A | N/A
     "" | 3 | Low | N/A | N/A
-    PLUSTSITEEN | TRIMAIN | BEDFORD | Tririga Location mapping for inbound flows | N/A
+    PLUSISITEEN | TRIMAIN | BEDFORD | Tririga Location mapping for inbound flows | N/A
     "" | TRIMAIN | SPACE 01 | N/A | N/A
     "" | TRIMAIN | TEST | N/A | N/A
     "" | TRIMAIN | TRIMAIN | N/A | N/A |
@@ -223,24 +223,24 @@ Within Maximo, configure your instance to be ready to receive records from TRIRI
 
 Enterprise Service | Control
 --|-- 
-PLUSTMXASSETInterface | PLUSTORGEN
-"" | PLUSTPRIORITY
-"" | PLUSTSITEEN 
-PLUSTMXOPERLOCInterface | PLUSTLOCSTATUS
- "" | PLUSTSITEEN
- "" | PLUSTSTATUS
- PLUSTMXPERSONInterface | PLUSTORGEN
- "" | PLUSTSITEEN
+PLUSIMXASSETInterface | PLUSIORGEN
+"" | PLUSIPRIORITY
+"" | PLUSISITEEN 
+PLUSIMXOPERLOCInterface | PLUSILOCSTATUS
+ "" | PLUSISITEEN
+ "" | PLUSISTATUS
+ PLUSIMXPERSONInterface | PLUSIORGEN
+ "" | PLUSISITEEN
 
 
 Publish Channel | Control
 --|--
-PLUSTMXASSETInterface | PLUSTPRIORITY
-PLUSTMXOPERLOCInterface | N/A
-PLUSTMXPERSONInterface | PLUSTORG
+PLUSIMXASSETInterface | PLUSIPRIORITY
+PLUSIMXOPERLOCInterface | N/A
+PLUSIMXPERSONInterface | PLUSIORG
  
  
-  - Return to the PLUSTTRIRIGA External System. On the left side of the External Systems page, select Setup Integration Controls under 'More Actions' and make sure that all 5 Integration Controls are showing as present.
+  - Return to the PLUSITRIRIGA External System. On the left side of the External Systems page, select Setup Integration Controls under 'More Actions' and make sure that all 5 Integration Controls are showing as present.
 
   </details>
   
@@ -288,9 +288,9 @@ Locate the .yaml file for the deployment direction (MX2TRI or TRI2MX) based on t
 
 Asset | Maximo | TRIRIGA
 ---|---|---
-Person | [MX2TRI](/docs/MAX2Tririga/PLUSTMXPerson2TRI.yaml) | [TRI2MX](/docs/TRI2Maximo/PLUSTTRIPerson2MX.yaml)
-Asset | [MX2TRI](/docs/MAX2Tririga/PLUSTMXAsset2TRI.yaml) | [TRI2MX](/docs/TRI2Maximo/PLUSTTRIAsset2MX.yaml)
-Location | [MX2TRI](/docs/MAX2Tririga/PLUSTMXLocation2TRI.yaml) | [TRI2MX](/docs/TRI2Maximo/PLUSTTRISpace2MX.yaml)
+Person | [MX2TRI](/docs/MAX2Tririga/PLUSIMXPerson2TRI.yaml) | [TRI2MX](/docs/TRI2Maximo/PLUSITRIPerson2MX.yaml)
+Asset | [MX2TRI](/docs/MAX2Tririga/PLUSIMXAsset2TRI.yaml) | [TRI2MX](/docs/TRI2Maximo/PLUSITRIAsset2MX.yaml)
+Location | [MX2TRI](/docs/MAX2Tririga/PLUSIMXLocation2TRI.yaml) | [TRI2MX](/docs/TRI2Maximo/PLUSITRISpace2MX.yaml)
 
 Make sure to check the [Mapping Document](/docs/TRIRIGA_Maximo_Field_Mapping-Final.xlsx) that the correct fields are being mapped in the selected flow.
 
